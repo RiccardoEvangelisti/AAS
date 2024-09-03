@@ -1,3 +1,4 @@
+from enum import Enum
 import random
 from typing import Literal
 import pygame
@@ -7,14 +8,27 @@ SQUARE_SIZE = 100
 
 RENDER_MODE = "human"
 
+Movement = Enum("Movement", ["UP", "DOWN", "LEFT", "RIGHT", "UP-RIGHT", "DOWN-RIGHT", "UP-LEFT", "DOWN-LEFT"])
+CombatAction = Enum("CombatAction", ["Melee"])
 
 class Agent:
     def __init__(self, image_path: str):
         self.id = None
         self.coordinates = None
+        self.allies = list()
+
         if RENDER_MODE == "human":
             self.image_path = image_path
 
+    def add_allie(self, allie_id: int):
+        self.allies.append(allie_id)
+
+class Player(Agent):
+    def __init__(self, image_path: str):
+        super().__init__(image_path)
+    
+    def possible_actions(self):
+        pass
 
 class DnDEnvironment:
     def __init__(self, n_squares_width=6, n_squares_height=5):
@@ -88,7 +102,6 @@ class DnDEnvironment:
         # If it's not empty, find an empty cell
         if self.grid[coordinates] != 0:
             coordinates = self.get_empty_cell_coordinates("random")
-
         return coordinates
 
     def render_grid(self):
@@ -120,6 +133,17 @@ class DnDEnvironment:
         pygame.display.flip()
 
 
+
+######################################
+
+class State:
+    def __init__(self, agents):
+        self.positions = [agent.coordinates for agent in agents]
+
+
+def step(state: State, action: int) -> State:
+    pass
+
 def main():
     env = DnDEnvironment(n_squares_width=6, n_squares_height=5)
 
@@ -130,6 +154,12 @@ def main():
     env.place_agent(monster, "random")
 
     print(f"\nGrid:\n{env.grid.transpose()}")
+
+    num_episodes = 1000
+
+    print(Movement(1))
+
+
 
     pygame.time.wait(1500)
     pygame.quit()
