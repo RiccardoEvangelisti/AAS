@@ -1,4 +1,3 @@
-from abc import ABC
 from enum import Enum
 
 
@@ -17,7 +16,14 @@ class Agent:
         self.allies.append(allie_id)
 
 
-class HasHP(ABC):
+class HasEndTurn:
+    EndTurn = Enum("EndTurn", "END_TURN")
+
+    def is_end_turn_available(self) -> bool:
+        return True
+
+
+class HasHP:
     def __init__(self, max_hp: int):
         self.max_hp = max_hp
         self.current_hp = max_hp
@@ -29,7 +35,7 @@ class HasHP(ABC):
         return self.current_hp > 0
 
 
-class HasMovement(ABC):
+class HasMovement:
     Movement = Enum("Movement", ["UP", "DOWN", "LEFT", "RIGHT", "UP_RIGHT", "DOWN_RIGHT", "UP_LEFT", "DOWN_LEFT"])
 
     def __init__(self, movement_speed: int = 30):
@@ -41,11 +47,11 @@ class HasMovement(ABC):
     def moved_of(self, n_cells: int):
         self.movement_left -= n_cells
 
-    def is_movement_possible(self) -> bool:
+    def is_movement_available(self) -> bool:
         return self.movement_left > 0
 
 
-class HasAttack(ABC):
+class HasAttack:
     Attack = Enum("Attack", ["MELEE"])
 
     def __init__(self, attack_power: int = 5):
@@ -60,7 +66,7 @@ class HasAttack(ABC):
         return self.attack_available
 
 
-class Player(Agent, HasHP, HasMovement, HasAttack):
+class Player(Agent, HasEndTurn, HasHP, HasMovement, HasAttack):
     def __init__(self, image_path: str, max_hp: int = 50, movement_speed: int = 30, attack_power: int = 5):
         Agent.__init__(self, image_path)
         HasHP.__init__(self, max_hp)
@@ -69,10 +75,18 @@ class Player(Agent, HasHP, HasMovement, HasAttack):
 
     from DnDEnvironment import DnDEnvironment
 
-    def possible_actions(self, env: DnDEnvironment):
-        possible_endTurn = Enum("EndTurn", "END_TURN")
-        if self.is_movement_possible():
-            possible_movement_directions = env.available_directions(self.id)
+    def available_actions(self, env: DnDEnvironment):
+        available_actions=[]
+        # HasEndTurn
+        if self.is_end_turn_available():
+            available_actions.append(HasEndTurn.EndTurn.END_TURN)
+        # HasMovement
+        if self.is_movement_available():
+            for direction_avail in env.available_directions(self.id):
+                available_actions.append(direction_avail)
+        # HasAttack
         if self.is_attack_available():
-            possible_attacks = env.available_attacks(self.id, self.allies)
-        return possible_endTurn, possible_movement_directions, possible_attacks
+            for attack_avail, target_coord in env.available_attacks(self.id, self.allies):
+                available_actions.append((attack_avail, target_coord))
+
+        return available_actions

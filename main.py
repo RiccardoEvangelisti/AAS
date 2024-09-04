@@ -9,8 +9,11 @@ class State:
     def update_agents_coord(self, agents):
         self.agents_coordinates = np.array([agent.coordinates for agent in agents]).ravel()
 
-    def update_current_hps(self, agent: HasHP):
+    def update_current_hp(self, agent: HasHP):
         self.current_hp = agent.current_hp
+
+    def update_damage_dealt(self, enemies: list[HasHP]):
+        self.damage_dealt = sum([enemy.max_hp - enemy.current_hp for enemy in enemies])
 
     def update_attack_available(self, agent: HasAttack):
         self.attack_available = agent.is_attack_available()
@@ -20,6 +23,7 @@ class State:
 
     def to_array(self):
         return np.array([self.agents_coordinates, self.current_hp, self.attack_available, self.movement_remaining])
+
 
 ######################################
 
@@ -35,7 +39,7 @@ def main():
 
     print(f"\nGrid:\n{env.grid.transpose()}")
 
-    print(player.possible_actions(env))
+    print(player.available_actions(env))
 
     env.startCombat()
 
