@@ -29,7 +29,9 @@ class MeleeAttack(Attack):
         self._attack_damage = attack_damage
         self._attack_range = 1
 
-    def is_available(self, current_position: tuple[int, int], grid, n_squares_height, n_squares_width):
+    def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
+        if isinstance(agent, HasAttack) and not agent.is_attack_available():
+            return False
         x, y = current_position
 
         min_cell_x = max(0, x - self._attack_range)
@@ -68,24 +70,16 @@ class MeleeAttack(Attack):
 #########################################
 
 
-class HasAttack(ABC):
-    @property
-    @abstractmethod
-    def attacks_left(self) -> int:
-        pass
+class HasAttack:
 
-    @property
-    @abstractmethod
-    def attacks_max_number(self) -> int:
-        pass
-
-    @attacks_left.setter
-    def attacks_left(self, value: int):
+    def set_attacks_left(self, value: int):
         self._attacks_left = value
 
-    @attacks_max_number.setter
-    def attacks_max_number(self, value: int):
+    def set_attacks_max_number(self, value: int):
         self._attacks_max_number = value
+
+    attacks_left = property(fset=set_attacks_left)
+    attacks_max_number = property(fset=set_attacks_max_number)
 
     def attacked(self):
         self._attacks_left -= 1

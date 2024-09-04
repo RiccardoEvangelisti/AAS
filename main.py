@@ -1,9 +1,11 @@
+import os
+import pickle
 import random
-from typing import Type
 import pygame
 import numpy as np
 
 from CombatActions import CombatAction
+from HasAttack import Attack, MeleeAttack
 from HasMovement import HasMovement
 
 from Agent import Agent, HasAttack, Monster, Player
@@ -25,13 +27,13 @@ class State:
 
     def update_attack_available(self, agent: Agent):
         if isinstance(agent, HasAttack):
-            self.attack_available = 1 if agent.is_attack_available() else 0
+            self.attacks_remaining = agent._attacks_left
         else:
-            self.attack_available = 0
+            self.attacks_remaining = 0
 
     def update_movement_available(self, agent: Agent):
         if isinstance(agent, HasMovement):
-            self.movement_remaining = agent.movement_left
+            self.movement_remaining = agent._movement_left
         else:
             self.movement_remaining = 0
 
@@ -41,7 +43,7 @@ class State:
                 self.agents_coordinates,
                 self.current_hp,
                 self.damage_dealt,
-                self.attack_available,
+                self.attacks_remaining,
                 self.movement_remaining,
             ]
         )
@@ -50,16 +52,36 @@ class State:
 ##########################################
 
 
-def step(action: CombatAction, env: DnDEnvironment):
+def step(action: CombatAction, available_actions, state: State, env: DnDEnvironment):
     playing_agent = env.get_playing_agent()
     enemy_agent = env.get_not_playing_agents()[0]
+
+    old_enemy_hp = enemy_agent.current_hp
 
     # Take Action
     env.takeAction(action)
 
-    # New State
-    new_state = State()
+    # Reward
+    if not enemy_agent.is_alive():
+        reward = 10
+        done = True
+    elif not playing_agent.is_alive():
+        reward = -10
+        done = True
+    elif enemy_agent.current_hp < old_enemy_hp:
+        reward = 1
+        done = False
+    elif action.name == "EndTurn" and state.attacks_remaining > 0 and any(isinstance(a, Attack) for a in available_actions):
+        reward = -1
+        done = False
+    else:
+        reward = 0
+        done = False
 
+    # New State
+    playing_agent = env.get_playing_agent()
+    enemy_agent = env.get_not_playing_agents()[0]
+    new_state = State()
     new_state.update_agents_coord(env.agents)
     new_state.update_current_hp(playing_agent)
     new_state.update_damage_dealt(enemy_agent)
@@ -67,33 +89,25 @@ def step(action: CombatAction, env: DnDEnvironment):
     new_state.update_movement_available(playing_agent)
     print(f"Current State: {new_state.to_array()}")
 
-    # Reward
-    if not enemy_agent.is_alive():
-        reward = 10
-        done = True
-    elif enemy_agent.current_hp < enemy_agent.max_hp:
-        reward = 1
-        done = False
-    elif playing_agent.current_hp < playing_agent.max_hp:
-        reward = -1
-        done = False
-    elif not playing_agent.is_alive():
-        reward = -10
-        done = True
-    else:
-        reward = 0
-        done = False
-
     return new_state, reward, done
 
 
 ######################################
 
-EPSILON = 0.1  # Exploration rate
-ALPHA = 0.2  # Learning rate
+EPSILON = 0.3  # Exploration rate
+ALPHA = 0.1  # Learning rate
 GAMMA = 0.9  # Discount factor
 
-q_dict = {}  # Dictionary to store Q-values: {(state.to_array, action.name): q_value}
+
+# Load value function from a file
+ql_file = "q_learning_values.pkl"
+if os.path.exists(ql_file):
+    with open(ql_file, "rb") as f:
+        q_dict = pickle.load(f)
+else:
+    q_dict = {}  # Dictionary to store Q-values: {(state.to_array, action.name): q_value}
+    with open(ql_file, "wb") as f:
+        pickle.dump(q_dict, f)
 
 
 # epsilon-greedy policy
@@ -150,7 +164,7 @@ def main():
 
     print(f"\nGrid:\n{env.grid.transpose()}")
 
-    num_episodes = 100
+    num_episodes = 10
     for episode in range(num_episodes):
         env.reset()
 
@@ -176,7 +190,7 @@ def main():
             action = chooseAction(state, available_actions)
 
             # Take the chosen action and observe the next state and reward
-            next_state, reward, done = step(action, env)
+            next_state, reward, done = step(action, available_actions, state, env)
 
             learn(state, action, reward, next_state)
 
@@ -185,11 +199,15 @@ def main():
 
             print(f"Episode {episode + 1}: \tAction: {action.name}, Reward: {reward}")
 
-            pygame.time.wait(100)
+            pygame.time.wait(30)
 
         print(f"Episode {episode + 1}: Total Reward = {total_reward}")
 
     pygame.quit()
+
+    # Save value function to a file
+    with open(ql_file, "wb") as f:
+        pickle.dump(q_dict, f)
 
 
 if __name__ == "__main__":

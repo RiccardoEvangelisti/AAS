@@ -1,12 +1,9 @@
-from enum import Enum
 import random
-from typing import Literal, cast
+from typing import Literal
 import pygame
 import numpy as np
 
 from Agent import *
-from Agent import HasMovement
-from HasAttack import MeleeAttack
 
 SQUARE_SIZE = 100
 
@@ -27,7 +24,6 @@ class DnDEnvironment:
             self.space_width = n_squares_width * SQUARE_SIZE
             self.space_height = n_squares_height * SQUARE_SIZE
             self.render()
-            self.render_grid()
 
     def reset(self):
         # Set playing agent to the first agent added to the environment
@@ -36,9 +32,17 @@ class DnDEnvironment:
         else:
             raise Exception("No agents in the environment")
 
-        # Full health
         for agent in self.agents:
+            # Full health
             agent.reset_maxHP()
+            # Full movement
+            if isinstance(agent, HasMovement):
+                agent.reset_movement()
+            # Full attacks
+            if isinstance(agent, HasAttack):
+                agent.reset_attacks()
+            # Reset position
+            self.update_occupied_position(agent.coordinates, agent.default_coordinates, agent.id)
 
     def takeAction(self, action):
         playing_agent = self.get_playing_agent()
@@ -113,17 +117,24 @@ class DnDEnvironment:
     def change_turn(self):
         playing_agent = self.get_playing_agent()
 
-        # Reset Movement speed and attacks left
+        # Reset Movement speed
         if isinstance(playing_agent, HasMovement):
             playing_agent.reset_movement()
+        # Reset attacks left
         if isinstance(playing_agent, HasAttack):
             playing_agent.reset_attacks()
 
+        # Change playing agent
         if self.playing_agentID == len(self.agents):
             # the agents list is over, so we start again
             self.playing_agentID = self.agents[0].id
         else:
             self.playing_agentID += 1
+
+        if RENDER_MODE == "human":
+            self.render_grid()
+            for agent in self.agents:
+                self.render_agent(agent)
 
     def get_playing_agent(self) -> Agent:
         return self.agents[self.playing_agentID - 1]
@@ -154,8 +165,12 @@ class DnDEnvironment:
     ):
         self.agents.append(agent)
         agent.id = self.generate_agentID()
+        if agent.id == 1:
+            self.playing_agentID = agent.id
+
         coordinates = self.get_empty_cell_coordinates(position)
         self.update_occupied_position(coordinates, coordinates, agent.id)
+        agent.default_coordinates = coordinates
 
     def get_empty_cell_coordinates(
         self, position: tuple[int, int] | Literal["top_left", "top_right", "bottom_left", "bottom_right", "random"]
@@ -221,6 +236,9 @@ class DnDEnvironment:
         screen = pygame.display.get_surface()
         # Draw the agent
         agent.image_obj = pygame.transform.smoothscale(agent.image_obj, (SQUARE_SIZE, SQUARE_SIZE))
-        screen.blit(agent.image_obj, self.grid_to_screen_position(agent.coordinates))
+        screen.blit(
+            (agent.image_obj.convert() if agent.id == self.get_playing_agent().id else agent.image_obj),
+            self.grid_to_screen_position(agent.coordinates),
+        )
         # Update the full display Surface to the screen
         pygame.display.flip()

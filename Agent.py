@@ -13,6 +13,7 @@ class Agent:
 
         self.id: int
         self.coordinates: tuple[int, int]
+        self.default_coordinates: tuple[int, int]
 
         self.max_hp = max_hp
         self.current_hp = max_hp
@@ -33,7 +34,7 @@ class Agent:
     def available_actions(self, grid, n_squares_height, n_squares_width) -> list[CombatAction]:
         available_actions: list[CombatAction] = []
         for _, combat_action in self.combatActions.items():
-            if combat_action.is_available(self.coordinates, grid, n_squares_height, n_squares_width):
+            if combat_action.is_available(self, self.coordinates, grid, n_squares_height, n_squares_width):
                 available_actions.append(combat_action)
         return available_actions
 
@@ -55,32 +56,16 @@ class Player(Agent, HasEndTurn, HasMovement, HasAttack):
         action = self.get_combat_action_EndTurn()
         self.combatActions[action.name] = action
 
-        self._movement_speed = movement_speed
-        self._movement_left = movement_speed
+        self.movement_speed = movement_speed
+        self.movement_left = self._movement_speed
         action = self.get_combat_action_Movements()
         for a in action:
             self.combatActions[a.name] = a
 
-        self._attacks_left = attacks_max_number
-        self._attacks_max_number = attacks_max_number
+        self.attacks_left = attacks_max_number
+        self.attacks_max_number = attacks_max_number
         action = self.get_combat_action_MeleeAttack(attack_damage)
         self.combatActions[action.name] = action
-
-    @property
-    def movement_speed(self) -> int:
-        return self._movement_speed
-
-    @property
-    def movement_left(self) -> int:
-        return self._movement_left
-
-    @property
-    def attacks_left(self) -> int:
-        return self._attacks_left
-
-    @property
-    def attacks_max_number(self) -> int:
-        return self._attacks_max_number
 
 
 #############################################
