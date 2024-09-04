@@ -1,59 +1,194 @@
+import random
 from typing import Type
 import pygame
 import numpy as np
 
+from CombatActions import CombatAction
 from HasMovement import HasMovement
 
-from Agent import Agent, HasAttack, HasHP, Player
+from Agent import Agent, HasAttack, Monster, Player
 from DnDEnvironment import DnDEnvironment
 
 
 class State:
     def update_agents_coord(self, agents: list[Agent]):
-        self.agents_coordinates = np.array([agent.coordinates for agent in agents]).ravel()
+        self.agents_coordinates = []
+        for agent in agents:
+            self.agents_coordinates.append(agent.coordinates[0])
+            self.agents_coordinates.append(agent.coordinates[1])
 
-    def update_current_hp(self, agent: HasHP):
+    def update_current_hp(self, agent: Agent):
         self.current_hp = agent.current_hp
 
-    def update_damage_dealt(self, agents: list[HasHP]):
-        self.damage_dealt = np.array([agent.max_hp - agent.current_hp for agent in agents]).ravel()
+    def update_damage_dealt(self, enemy: Agent):
+        self.damage_dealt = enemy.max_hp - enemy.current_hp
 
-    def update_attack_available(self, agent: HasAttack):
-        self.attack_available = 1 if agent.is_attack_available() else 0
+    def update_attack_available(self, agent: Agent):
+        if isinstance(agent, HasAttack):
+            self.attack_available = 1 if agent.is_attack_available() else 0
+        else:
+            self.attack_available = 0
 
-    def update_movement_available(self, agent: HasMovement):
-        self.movement_remaining = agent.movement_left
+    def update_movement_available(self, agent: Agent):
+        if isinstance(agent, HasMovement):
+            self.movement_remaining = agent.movement_left
+        else:
+            self.movement_remaining = 0
 
     def to_array(self):
-        return np.array([self.agents_coordinates, self.current_hp, self.attack_available, self.movement_remaining])
+        return np.hstack(
+            [
+                self.agents_coordinates,
+                self.current_hp,
+                self.damage_dealt,
+                self.attack_available,
+                self.movement_remaining,
+            ]
+        )
+
+
+##########################################
+
+
+def step(action: CombatAction, env: DnDEnvironment):
+    playing_agent = env.get_playing_agent()
+    enemy_agent = env.get_not_playing_agents()[0]
+
+    # Take Action
+    env.takeAction(action)
+
+    # New State
+    new_state = State()
+
+    new_state.update_agents_coord(env.agents)
+    new_state.update_current_hp(playing_agent)
+    new_state.update_damage_dealt(enemy_agent)
+    new_state.update_attack_available(playing_agent)
+    new_state.update_movement_available(playing_agent)
+    print(f"Current State: {new_state.to_array()}")
+
+    # Reward
+    if not enemy_agent.is_alive():
+        reward = 10
+        done = True
+    elif enemy_agent.current_hp < enemy_agent.max_hp:
+        reward = 1
+        done = False
+    elif playing_agent.current_hp < playing_agent.max_hp:
+        reward = -1
+        done = False
+    elif not playing_agent.is_alive():
+        reward = -10
+        done = True
+    else:
+        reward = 0
+        done = False
+
+    return new_state, reward, done
 
 
 ######################################
+
+EPSILON = 0.1  # Exploration rate
+ALPHA = 0.2  # Learning rate
+GAMMA = 0.9  # Discount factor
+
+q_dict = {}  # Dictionary to store Q-values: {(state.to_array, action.name): q_value}
+
+
+# epsilon-greedy policy
+def chooseAction(state, available_actions: list[CombatAction]):
+    if random.random() < EPSILON:
+        # Explore: choose a random action
+        return random.choice(available_actions)
+    else:
+        # Exploit
+
+        # Take state-action pairs that match the current state
+        q_filtered = dict(filter(lambda item: item[0][0] == state.to_array().tobytes(), q_dict.items()))
+
+        # Get the actions with the highest q-value
+        # If there are no matching state-action pairs, return a random action
+        if not q_filtered:
+            return random.choice(available_actions)
+        else:
+            # Get the highest q-value
+            max_q_value = max(q_filtered.values())
+            # Get state-action pairs with the highest q-value
+            q_filtered = dict(filter(lambda item: item[1] == max_q_value, q_filtered.items()))
+            # Get the actions with the highest q-value
+            actions = [action for (_, action), _ in q_filtered.items()]
+            # Return a random action from the list of actions with the highest q-value
+            return random.choice(actions)
+
+
+def learn(state, action, reward, next_state):
+    q_value_current = q_dict.get((state.to_array().tobytes(), action), 0)
+    # Take the state-action pairs that match the next_state
+    q_filtered = dict(filter(lambda item: item[0][0] == next_state.to_array().tobytes(), q_dict.items()))
+
+    # Get the highest q-value for the next_state
+    max_q_value_next = max(q_filtered.values()) if q_filtered else 0
+
+    # Update the Q-value for the current state-action pair
+    q_dict[(state.to_array().tobytes(), action)] = q_value_current + ALPHA * (
+        reward + GAMMA * max_q_value_next - q_value_current
+    )
+
+
+#####################################
 
 
 def main():
     env = DnDEnvironment(n_squares_width=6, n_squares_height=5, _RENDER_MODE="human")
 
-    player = Player("Erik combat pose-token.png")
-    monster = Agent("mimic-token.png")
+    player = Player("Erik combat pose-token.png", 50)
+    monster = Monster("mimic-token.png", 100)
 
     env.place_agent(player, "top_left")
     env.place_agent(monster, "random")
 
     print(f"\nGrid:\n{env.grid.transpose()}")
 
-    print(player.available_actions(env))
+    num_episodes = 100
+    for episode in range(num_episodes):
+        env.reset()
 
-    env.startCombat()
+        done = False
 
-    state = State()
-    state.update_agents_coord([player, monster])
+        total_reward = 0
 
-    print()
+        # Get the current state
+        state = State()
+        playing_agent = env.get_playing_agent()
+        state.update_agents_coord(env.agents)
+        state.update_current_hp(playing_agent)
+        state.update_damage_dealt(env.get_not_playing_agents()[0])
+        state.update_attack_available(playing_agent)
+        state.update_movement_available(playing_agent)
+        print(f"Current State: {state.to_array()}")
 
-    num_episodes = 1000
+        while not done:
+            # Choose an action based on the current state
+            available_actions = env.get_playing_agent().available_actions(
+                env.grid, env.n_squares_height, env.n_squares_width
+            )
+            action = chooseAction(state, available_actions)
 
-    pygame.time.wait(1500)
+            # Take the chosen action and observe the next state and reward
+            next_state, reward, done = step(action, env)
+
+            learn(state, action, reward, next_state)
+
+            total_reward += reward
+            state = next_state
+
+            print(f"Episode {episode + 1}: \tAction: {action.name}, Reward: {reward}")
+
+            pygame.time.wait(100)
+
+        print(f"Episode {episode + 1}: Total Reward = {total_reward}")
+
     pygame.quit()
 
 

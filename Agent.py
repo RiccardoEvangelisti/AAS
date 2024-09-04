@@ -1,77 +1,70 @@
-from enum import Enum
+from abc import ABC, abstractmethod
 
+import pygame
 from CombatActions import CombatAction
-from HasHP import HasHP
 from HasMovement import HasMovement
 from HasAttack import HasAttack
 from HasEndTurn import HasEndTurn
 
 
 class Agent:
-    def __init__(self, image_path: str, RENDER_MODE="human"):
+    def __init__(self, image_path: str, max_hp: int, RENDER_MODE="human"):
         RENDER_MODE = RENDER_MODE
 
         self.id: int
         self.coordinates: tuple[int, int]
-        self.allies = list()
-        self.combatActions: list[CombatAction] = []
+
+        self.max_hp = max_hp
+        self.current_hp = max_hp
+        self.combatActions = {}  # action.name, action
 
         if RENDER_MODE == "human":
-            self.image_path = image_path
+            self.image_obj = pygame.image.load(image_path)
 
-    def add_allie(self, allie_id: int):
-        self.allies.append(allie_id)
+    def is_alive(self) -> bool:
+        return self.current_hp > 0
+
+    def took_damage(self, damage: int):
+        self.current_hp -= damage
+
+    def reset_maxHP(self):
+        self.current_hp = self.max_hp
+
+    def available_actions(self, grid, n_squares_height, n_squares_width) -> list[CombatAction]:
+        available_actions: list[CombatAction] = []
+        for _, combat_action in self.combatActions.items():
+            if combat_action.is_available(self.coordinates, grid, n_squares_height, n_squares_width):
+                available_actions.append(combat_action)
+        return available_actions
 
 
-class Player(Agent, HasEndTurn, HasHP, HasMovement, HasAttack):
+########################################################
+
+
+class Player(Agent, HasEndTurn, HasMovement, HasAttack):
     def __init__(
         self,
         image_path: str,
         max_hp: int = 50,
         movement_speed: int = 30,
-        attack_power: int = 5,
+        attack_damage: int = 5,
         attacks_max_number: int = 1,
     ):
-        Agent.__init__(self, image_path)
+        Agent.__init__(self, image_path, max_hp)
 
-        self.combatActions.append(self.get_combat_action_EndTurn())
-
-        self._max_hp = max_hp
-        self._current_hp = max_hp
+        action = self.get_combat_action_EndTurn()
+        self.combatActions[action.name] = action
 
         self._movement_speed = movement_speed
         self._movement_left = movement_speed
-        self.combatActions.extend(self.get_combat_action_Movements())
+        action = self.get_combat_action_Movements()
+        for a in action:
+            self.combatActions[a.name] = a
 
-        self._attack_power = attack_power
         self._attacks_left = attacks_max_number
         self._attacks_max_number = attacks_max_number
-        self.combatActions.append(self.get_combat_action_Attack())
-
-    from DnDEnvironment import DnDEnvironment
-
-    def available_actions(self, env: DnDEnvironment) -> list[CombatAction]:
-        available_actions: list[CombatAction] = []
-        # HasEndTurn
-        available_actions.append(self.get_combat_action_EndTurn())
-        # HasMovement
-        if self.is_movement_available():
-            for direction_avail in env.available_directions(self.id):
-                available_actions.append(direction_avail)
-        # HasAttack
-        if self.is_attack_available():
-            for attack_avail, target_coord in env.available_attacks(self.id, self.allies):
-                available_actions.append((attack_avail, target_coord))
-
-        return available_actions
-
-    @property
-    def max_hp(self) -> int:
-        return self._max_hp
-
-    @property
-    def current_hp(self) -> int:
-        return self._current_hp
+        action = self.get_combat_action_MeleeAttack(attack_damage)
+        self.combatActions[action.name] = action
 
     @property
     def movement_speed(self) -> int:
@@ -82,13 +75,24 @@ class Player(Agent, HasEndTurn, HasHP, HasMovement, HasAttack):
         return self._movement_left
 
     @property
-    def attack_power(self) -> int:
-        return self._attack_power
-
-    @property
     def attacks_left(self) -> int:
         return self._attacks_left
 
     @property
     def attacks_max_number(self) -> int:
         return self._attacks_max_number
+
+
+#############################################
+
+
+class Monster(Agent, HasEndTurn):
+    def __init__(
+        self,
+        image_path: str,
+        max_hp: int = 100,
+    ):
+        Agent.__init__(self, image_path, max_hp)
+
+        action = self.get_combat_action_EndTurn()
+        self.combatActions[action.name] = action

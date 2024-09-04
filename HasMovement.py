@@ -4,16 +4,13 @@ from enum import Enum
 from CombatActions import CombatAction
 
 
-class Movement(CombatAction, ABC):
-    @abstractmethod
-    def is_available(self, current_position: tuple[int, int], grid, n_squares_height, n_squares_width):
-        pass
+# class Movement(CombatAction, ABC):
 
 
 #################################################
 
 
-class Movement_UP(Movement):
+class Movement_UP(CombatAction):
     def __init__(self):
         self._name = "Movement_UP"
 
@@ -26,7 +23,7 @@ class Movement_UP(Movement):
         return y > 0 and grid[x, y - 1] == 0
 
 
-class Movement_DOWN(Movement):
+class Movement_DOWN(CombatAction):
     def __init__(self):
         self._name = "Movement_DOWN"
 
@@ -39,7 +36,7 @@ class Movement_DOWN(Movement):
         return y < n_squares_height - 1 and grid[x, y + 1] == 0
 
 
-class Movement_LEFT(Movement):
+class Movement_LEFT(CombatAction):
     def __init__(self):
         self._name = "Movement_LEFT"
 
@@ -52,7 +49,7 @@ class Movement_LEFT(Movement):
         return x > 0 and grid[x - 1, y] == 0
 
 
-class Movement_RIGHT(Movement):
+class Movement_RIGHT(CombatAction):
     def __init__(self):
         self._name = "Movement_RIGHT"
 
@@ -65,7 +62,7 @@ class Movement_RIGHT(Movement):
         return x < n_squares_width - 1 and grid[x + 1, y] == 0
 
 
-class Movement_UP_LEFT(Movement):
+class Movement_UP_LEFT(CombatAction):
     def __init__(self):
         self._name = "Movement_UP_LEFT"
 
@@ -78,7 +75,7 @@ class Movement_UP_LEFT(Movement):
         return y > 0 and x > 0 and grid[x - 1, y - 1] == 0
 
 
-class Movement_UP_RIGHT(Movement):
+class Movement_UP_RIGHT(CombatAction):
     def __init__(self):
         self._name = "Movement_UP_RIGHT"
 
@@ -91,7 +88,7 @@ class Movement_UP_RIGHT(Movement):
         return y > 0 and x < n_squares_width - 1 and grid[x + 1, y - 1] == 0
 
 
-class Movement_DOWN_LEFT(Movement):
+class Movement_DOWN_LEFT(CombatAction):
     def __init__(self):
         self._name = "Movement_DOWN_LEFT"
 
@@ -104,7 +101,7 @@ class Movement_DOWN_LEFT(Movement):
         return y < n_squares_height - 1 and x > 0 and grid[x - 1, y + 1] == 0
 
 
-class Movement_DOWN_RIGHT(Movement):
+class Movement_DOWN_RIGHT(CombatAction):
     def __init__(self):
         self._name = "Movement_DOWN_RIGHT"
 
