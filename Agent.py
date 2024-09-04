@@ -1,5 +1,6 @@
 from enum import Enum
 
+from CombatActions import CombatAction
 from HasHP import HasHP
 from HasMovement import HasMovement
 from HasAttack import HasAttack
@@ -13,6 +14,7 @@ class Agent:
         self.id: int
         self.coordinates: tuple[int, int]
         self.allies = list()
+        self.combatActions: list[CombatAction] = []
 
         if RENDER_MODE == "human":
             self.image_path = image_path
@@ -32,23 +34,26 @@ class Player(Agent, HasEndTurn, HasHP, HasMovement, HasAttack):
     ):
         Agent.__init__(self, image_path)
 
+        self.combatActions.append(self.get_combat_action_EndTurn())
+
         self._max_hp = max_hp
         self._current_hp = max_hp
 
         self._movement_speed = movement_speed
         self._movement_left = movement_speed
+        self.combatActions.extend(self.get_combat_action_Movements())
 
         self._attack_power = attack_power
         self._attacks_left = attacks_max_number
         self._attacks_max_number = attacks_max_number
+        self.combatActions.append(self.get_combat_action_Attack())
 
     from DnDEnvironment import DnDEnvironment
 
-    def available_actions(self, env: DnDEnvironment):
-        available_actions = []
+    def available_actions(self, env: DnDEnvironment) -> list[CombatAction]:
+        available_actions: list[CombatAction] = []
         # HasEndTurn
-        if self.is_end_turn_available():
-            available_actions.append(HasEndTurn.EndTurn.END_TURN)
+        available_actions.append(self.get_combat_action_EndTurn())
         # HasMovement
         if self.is_movement_available():
             for direction_avail in env.available_directions(self.id):
@@ -70,20 +75,20 @@ class Player(Agent, HasEndTurn, HasHP, HasMovement, HasAttack):
 
     @property
     def movement_speed(self) -> int:
-        raise NotImplementedError
+        return self._movement_speed
 
     @property
     def movement_left(self) -> int:
-        raise NotImplementedError
+        return self._movement_left
 
     @property
     def attack_power(self) -> int:
-        raise NotImplementedError
+        return self._attack_power
 
     @property
     def attacks_left(self) -> int:
-        raise NotImplementedError
+        return self._attacks_left
 
     @property
     def attacks_max_number(self) -> int:
-        raise NotImplementedError
+        return self._attacks_max_number

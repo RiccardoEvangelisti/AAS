@@ -52,22 +52,22 @@ class DnDEnvironment:
         else:
             self.playing_agentID += 1
 
-    def available_directions(self, agentID: int) -> list[HasMovement.Movement]:
-        x, y = self.agents[agentID - 1].coordinates
-        directions = [
-            (HasMovement.Movement.UP, y > 0 and self.grid[x, y - 1] == 0),
-            (HasMovement.Movement.DOWN, y < self.n_squares_height - 1 and self.grid[x, y + 1] == 0),
-            (HasMovement.Movement.LEFT, x > 0 and self.grid[x - 1, y] == 0),
-            (HasMovement.Movement.RIGHT, x < self.n_squares_width - 1 and self.grid[x + 1, y] == 0),
-            (HasMovement.Movement.UP_LEFT, y > 0 and x > 0 and self.grid[x - 1, y - 1] == 0),
-            (HasMovement.Movement.UP_RIGHT, y > 0 and x < self.n_squares_width - 1 and self.grid[x + 1, y - 1] == 0),
-            (HasMovement.Movement.DOWN_LEFT, y < self.n_squares_height - 1 and x > 0 and self.grid[x - 1, y + 1] == 0),
-            (
-                HasMovement.Movement.DOWN_RIGHT,
-                y < self.n_squares_height - 1 and x < self.n_squares_width - 1 and self.grid[x + 1, y + 1] == 0,
-            ),
-        ]
-        return [direction for direction, condition in directions if condition]
+    # def available_directions(self, agentID: int) -> list[HasMovement.Movement]:
+    #     x, y = self.agents[agentID - 1].coordinates
+    #     directions = [
+    #         (HasMovement.Movement.UP, y > 0 and self.grid[x, y - 1] == 0),
+    #         (HasMovement.Movement.DOWN, y < self.n_squares_height - 1 and self.grid[x, y + 1] == 0),
+    #         (HasMovement.Movement.LEFT, x > 0 and self.grid[x - 1, y] == 0),
+    #         (HasMovement.Movement.RIGHT, x < self.n_squares_width - 1 and self.grid[x + 1, y] == 0),
+    #         (HasMovement.Movement.UP_LEFT, y > 0 and x > 0 and self.grid[x - 1, y - 1] == 0),
+    #         (HasMovement.Movement.UP_RIGHT, y > 0 and x < self.n_squares_width - 1 and self.grid[x + 1, y - 1] == 0),
+    #         (HasMovement.Movement.DOWN_LEFT, y < self.n_squares_height - 1 and x > 0 and self.grid[x - 1, y + 1] == 0),
+    #         (
+    #             HasMovement.Movement.DOWN_RIGHT,
+    #             y < self.n_squares_height - 1 and x < self.n_squares_width - 1 and self.grid[x + 1, y + 1] == 0,
+    #         ),
+    #     ]
+    #     return [direction for direction, condition in directions if condition]
 
     def update_occupied_position(self, old_position: tuple[int, int], new_position: tuple[int, int], agentID: int):
         """
@@ -77,9 +77,9 @@ class DnDEnvironment:
 
         self.agents[agentID - 1].coordinates = new_position
 
-    def available_attacks(self, agentID: int, allies: list[int]) -> list[tuple[HasAttack.Attack, tuple[int, int]]]:
+    def available_attacks(self, agentID: int, alliesID: list[int]) -> list[tuple[HasAttack.Attack, tuple[int, int]]]:
         x, y = self.agents[agentID - 1].coordinates
-        empty_or_ally = [0] + allies
+        empty_or_ally = [0] + alliesID
         attacks = [
             (HasAttack.Attack.MELEE, (x, y - 1)),
             (HasAttack.Attack.MELEE, (x, y + 1)),

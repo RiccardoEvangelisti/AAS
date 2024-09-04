@@ -1,3 +1,4 @@
+from typing import Type
 import pygame
 import numpy as np
 
@@ -8,17 +9,17 @@ from DnDEnvironment import DnDEnvironment
 
 
 class State:
-    def update_agents_coord(self, agents):
+    def update_agents_coord(self, agents: list[Agent]):
         self.agents_coordinates = np.array([agent.coordinates for agent in agents]).ravel()
 
     def update_current_hp(self, agent: HasHP):
         self.current_hp = agent.current_hp
 
-    def update_damage_dealt(self, agents: list[HasHP], alliesID: list[int]):
-        self.damage_dealt = sum([enemy.max_hp - enemy.current_hp for enemy in agents if enemy.id not in alliesID])
+    def update_damage_dealt(self, agents: list[HasHP]):
+        self.damage_dealt = np.array([agent.max_hp - agent.current_hp for agent in agents]).ravel()
 
     def update_attack_available(self, agent: HasAttack):
-        self.attack_available = agent.is_attack_available()
+        self.attack_available = 1 if agent.is_attack_available() else 0
 
     def update_movement_available(self, agent: HasMovement):
         self.movement_remaining = agent.movement_left
@@ -44,6 +45,11 @@ def main():
     print(player.available_actions(env))
 
     env.startCombat()
+
+    state = State()
+    state.update_agents_coord([player, monster])
+
+    print()
 
     num_episodes = 1000
 

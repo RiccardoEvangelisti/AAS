@@ -1,7 +1,21 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 
+from CombatActions import CombatAction
 from HasHP import HasHP
+
+
+class Attack(CombatAction):
+
+    def __init__(self):
+        self._name = "Attack"
+
+    @property
+    def name(self):
+        return self._name
+    
+    def is_available(self, character: HasAttack) -> bool:
+
 
 
 class HasAttack(ABC):
@@ -33,8 +47,6 @@ class HasAttack(ABC):
     def attacks_max_number(self, value: int):
         self._attacks_max_number = value
 
-    Attack = Enum("Attack", ["MELEE"])
-
     def attack(self, enemy: HasHP):
         enemy.took_damage(self.attack_power)
         self._attacks_left -= 1
@@ -44,3 +56,6 @@ class HasAttack(ABC):
 
     def reset_attacks(self):
         self._attacks_left = self._attacks_max_number
+
+    def get_combat_action_Attack(self):
+        return Attack()

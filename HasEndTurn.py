@@ -1,9 +1,16 @@
+from CombatActions import CombatAction
 
-from enum import Enum
+
+class EndTurn(CombatAction):
+
+    def __init__(self):
+        self._name = "EndTurn"
+
+    @property
+    def name(self):
+        return self._name
 
 
 class HasEndTurn:
-    EndTurn = Enum("EndTurn", "END_TURN")
-
-    def is_end_turn_available(self) -> bool:
-        return True
+    def get_combat_action_EndTurn(self):
+        return EndTurn()
