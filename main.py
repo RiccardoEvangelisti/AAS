@@ -1,7 +1,9 @@
 import pygame
 import numpy as np
 
-from Agent import Agent, HasAttack, HasHP, HasMovement, Player
+from HasMovement import HasMovement
+
+from Agent import Agent, HasAttack, HasHP, Player
 from DnDEnvironment import DnDEnvironment
 
 
@@ -12,8 +14,8 @@ class State:
     def update_current_hp(self, agent: HasHP):
         self.current_hp = agent.current_hp
 
-    def update_damage_dealt(self, enemies: list[HasHP]):
-        self.damage_dealt = sum([enemy.max_hp - enemy.current_hp for enemy in enemies])
+    def update_damage_dealt(self, agents: list[HasHP], alliesID: list[int]):
+        self.damage_dealt = sum([enemy.max_hp - enemy.current_hp for enemy in agents if enemy.id not in alliesID])
 
     def update_attack_available(self, agent: HasAttack):
         self.attack_available = agent.is_attack_available()
