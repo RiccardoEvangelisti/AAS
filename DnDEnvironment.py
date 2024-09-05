@@ -55,6 +55,14 @@ class DnDEnvironment:
             target_agent.took_damage(action.attack_damage)
             playing_agent.attacked()
 
+        if action.name == "RangeAttack" and isinstance(playing_agent, HasAttack):
+            # Get the agent that is being attacked
+            _, targetID = action.target
+            target_agent = self.agents[targetID - 1]
+            # Target takes damage
+            target_agent.took_damage(action.attack_damage)
+            playing_agent.attacked()
+
         if action.name == "EndTurn":
             self.change_turn()
 

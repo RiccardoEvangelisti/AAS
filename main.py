@@ -10,6 +10,7 @@ from HasMovement import HasMovement
 
 from Agent import Agent, HasAttack, Monster, Player
 from DnDEnvironment import DnDEnvironment
+from Statistics import EpisodeStatistics
 
 
 class State:
@@ -69,14 +70,14 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
         reward = -10
         done = True
     elif enemy_agent.current_hp < old_enemy_hp:
-        reward = 1
+        reward = 3
         done = False
     elif (
         action.name == "EndTurn"
         and state.attacks_remaining > 0
         and any(isinstance(a, Attack) for a in available_actions)
     ):
-        reward = -1
+        reward = -5
         done = False
     else:
         reward = 0
@@ -160,18 +161,18 @@ def learn(state, action, reward, next_state):
 
 
 def main():
-    env = DnDEnvironment(n_squares_width=4, n_squares_height=3, _RENDER_MODE="human")
+    env = DnDEnvironment(n_squares_width=6, n_squares_height=5, _RENDER_MODE="human")
 
     player = Player("Erik combat pose-token.png", max_hp=50)
-    monster = Player("mimic2-token.png", max_hp=100, attack_damage=10, movement_speed=15)
+    monster = Monster("mimic2-token.png", max_hp=100, attack_damage=10, movement_speed=15)
 
-    env.place_agent(player, "top_left")
+    env.place_agent(player, "random")
     env.place_agent(monster, "random")
 
     print(f"\nGrid:\n{env.grid.transpose()}")
 
-    winners = []
-    num_episodes = 10
+    statistics: list[EpisodeStatistics] = []
+    num_episodes = 100
     for episode in range(num_episodes):
         env.reset()
 
@@ -216,9 +217,20 @@ def main():
 
         print(f"Episode {episode + 1}: Total Reward = {total_reward}")
         print(f"Won {env.get_playing_agent().id} with {env.get_playing_agent().current_hp} HP left")
-        winners.append(env.get_playing_agent().id)
+        statistics.append(
+            EpisodeStatistics(
+                episode + 1,
+                env.get_playing_agent().id,
+                env.get_playing_agent().current_hp,
+                total_reward,
+            )
+        )
 
-    print(f"Winners: {winners}")
+    print("\n\n\nStatistics")
+    for stat in statistics:
+        print(
+            f"Episode: {stat.episode_number}, Winner: {stat.winner}, HP_enemy: {stat.enemy_hp_remaining}, Total Reward: {stat.total_reward}"
+        )
     pygame.quit()
 
 
