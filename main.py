@@ -86,7 +86,7 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
     playing_agent = env.get_playing_agent()
     enemy_agent = env.get_not_playing_agents()[0]
     new_state = State()
-    new_state.update_agents_coord(env.agents)
+    new_state.update_agents_coord([playing_agent, enemy_agent])
     new_state.update_current_hp(playing_agent)
     new_state.update_damage_dealt(enemy_agent)
     new_state.update_attack_available(playing_agent)
@@ -98,7 +98,7 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
 
 ######################################
 
-EPSILON = 0.3  # Exploration rate
+EPSILON = 0.2  # Exploration rate
 ALPHA = 0.1  # Learning rate
 GAMMA = 0.9  # Discount factor
 
@@ -160,7 +160,7 @@ def learn(state, action, reward, next_state):
 
 
 def main():
-    env = DnDEnvironment(n_squares_width=3, n_squares_height=2, _RENDER_MODE="human")
+    env = DnDEnvironment(n_squares_width=6, n_squares_height=5, _RENDER_MODE="human")
 
     player = Player("Erik combat pose-token.png", 50)
     monster = Player("Erik combat pose-token.png", 50)  # Monster("mimic-token.png", 100)
@@ -181,7 +181,8 @@ def main():
         # Get the current state
         state = State()
         playing_agent = env.get_playing_agent()
-        state.update_agents_coord(env.agents)
+        enemy_agent = env.get_not_playing_agents()[0]
+        state.update_agents_coord([playing_agent, enemy_agent])
         state.update_current_hp(playing_agent)
         state.update_damage_dealt(env.get_not_playing_agents()[0])
         state.update_attack_available(playing_agent)
