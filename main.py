@@ -71,7 +71,11 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
     elif enemy_agent.current_hp < old_enemy_hp:
         reward = 1
         done = False
-    elif action.name == "EndTurn" and state.attacks_remaining > 0 and any(isinstance(a, Attack) for a in available_actions):
+    elif (
+        action.name == "EndTurn"
+        and state.attacks_remaining > 0
+        and any(isinstance(a, Attack) for a in available_actions)
+    ):
         reward = -1
         done = False
     else:
@@ -87,7 +91,7 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
     new_state.update_damage_dealt(enemy_agent)
     new_state.update_attack_available(playing_agent)
     new_state.update_movement_available(playing_agent)
-    print(f"Current State: {new_state.to_array()}")
+    print(f"\tNew State: {new_state.to_array()}")
 
     return new_state, reward, done
 
@@ -154,17 +158,17 @@ def learn(state, action, reward, next_state):
 
 
 def main():
-    env = DnDEnvironment(n_squares_width=6, n_squares_height=5, _RENDER_MODE="human")
+    env = DnDEnvironment(n_squares_width=6, n_squares_height=2, _RENDER_MODE="human")
 
     player = Player("Erik combat pose-token.png", 50)
-    monster = Monster("mimic-token.png", 100)
+    monster = Player("Erik combat pose-token.png", 50) #Monster("mimic-token.png", 100)
 
     env.place_agent(player, "top_left")
     env.place_agent(monster, "random")
 
     print(f"\nGrid:\n{env.grid.transpose()}")
 
-    num_episodes = 10
+    num_episodes = 20
     for episode in range(num_episodes):
         env.reset()
 
@@ -180,7 +184,7 @@ def main():
         state.update_damage_dealt(env.get_not_playing_agents()[0])
         state.update_attack_available(playing_agent)
         state.update_movement_available(playing_agent)
-        print(f"Current State: {state.to_array()}")
+        print(f"Initial State: {state.to_array()}")
 
         while not done:
             # Choose an action based on the current state
@@ -188,6 +192,7 @@ def main():
                 env.grid, env.n_squares_height, env.n_squares_width
             )
             action = chooseAction(state, available_actions)
+            print(f"Episode {episode + 1}:\n\tAction: {action.name}")
 
             # Take the chosen action and observe the next state and reward
             next_state, reward, done = step(action, available_actions, state, env)
@@ -197,17 +202,17 @@ def main():
             total_reward += reward
             state = next_state
 
-            print(f"Episode {episode + 1}: \tAction: {action.name}, Reward: {reward}")
+            print(f"\tReward: {reward}")
 
             pygame.time.wait(30)
+
+        # Save value function to a file
+        with open(ql_file, "wb") as f:
+            pickle.dump(q_dict, f)
 
         print(f"Episode {episode + 1}: Total Reward = {total_reward}")
 
     pygame.quit()
-
-    # Save value function to a file
-    with open(ql_file, "wb") as f:
-        pickle.dump(q_dict, f)
 
 
 if __name__ == "__main__":
