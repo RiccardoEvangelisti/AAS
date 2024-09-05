@@ -116,28 +116,30 @@ else:
 
 # epsilon-greedy policy
 def chooseAction(state, available_actions: list[CombatAction]):
+    # Explore
     if random.random() < EPSILON:
-        # Explore: choose a random action
         return random.choice(available_actions)
-    else:
-        # Exploit
 
-        # Take state-action pairs that match the current state
-        q_filtered = dict(filter(lambda item: item[0][0] == state.to_array().tobytes(), q_dict.items()))
+    # Exploit
+    state_bytes = state.to_array().tobytes()
 
-        # Get the actions with the highest q-value
-        # If there are no matching state-action pairs, return a random action
-        if not q_filtered:
-            return random.choice(available_actions)
-        else:
-            # Get the highest q-value
-            max_q_value = max(q_filtered.values())
-            # Get state-action pairs with the highest q-value
-            q_filtered = dict(filter(lambda item: item[1] == max_q_value, q_filtered.items()))
-            # Get the actions with the highest q-value
-            actions = [action for (_, action), _ in q_filtered.items()]
-            # Return a random action from the list of actions with the highest q-value
-            return random.choice(actions)
+    # Take action-value pairs that match the current state and in available actions
+    q_filtered = {
+        _action_str: _value
+        for (_state, _action_str), _value in q_dict.items()
+        if _state == state_bytes and any(action.name == _action_str for action in available_actions)
+    }
+
+    # If there are no matching state-action pairs, return a random action
+    if not q_filtered:
+        return random.choice(available_actions)
+
+    # Get the actions with the highest q-value
+    max_q_value = max(q_filtered.values())  # Get the highest q-value
+    # Get actions with the highest q-value
+    best_actions = [action for action in available_actions if q_filtered.get(action.name) == max_q_value]
+    # Return a random action from the list of actions with the highest q-value
+    return random.choice(best_actions)
 
 
 def learn(state, action, reward, next_state):
@@ -149,7 +151,7 @@ def learn(state, action, reward, next_state):
     max_q_value_next = max(q_filtered.values()) if q_filtered else 0
 
     # Update the Q-value for the current state-action pair
-    q_dict[(state.to_array().tobytes(), action)] = q_value_current + ALPHA * (
+    q_dict[(state.to_array().tobytes(), action.name)] = q_value_current + ALPHA * (
         reward + GAMMA * max_q_value_next - q_value_current
     )
 
@@ -158,10 +160,10 @@ def learn(state, action, reward, next_state):
 
 
 def main():
-    env = DnDEnvironment(n_squares_width=6, n_squares_height=2, _RENDER_MODE="human")
+    env = DnDEnvironment(n_squares_width=3, n_squares_height=2, _RENDER_MODE="human")
 
     player = Player("Erik combat pose-token.png", 50)
-    monster = Player("Erik combat pose-token.png", 50) #Monster("mimic-token.png", 100)
+    monster = Player("Erik combat pose-token.png", 50)  # Monster("mimic-token.png", 100)
 
     env.place_agent(player, "top_left")
     env.place_agent(monster, "random")
