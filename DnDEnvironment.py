@@ -210,7 +210,6 @@ class DnDEnvironment:
     def render(self):
         # Create the screen
         pygame.display.set_mode((self.space_width, self.space_height))
-        pygame.display.set_caption("Kill the Monster")
         # Update the full display Surface to the screen
         pygame.display.update()
 
@@ -240,5 +239,12 @@ class DnDEnvironment:
             (agent.image_obj.convert() if agent.id == self.get_playing_agent().id else agent.image_obj),
             self.grid_to_screen_position(agent.coordinates),
         )
+        # Draw the agent's health bar
+        health_bar_width = (agent.current_hp / agent.max_hp) * SQUARE_SIZE
+        health_bar_height = SQUARE_SIZE / 10
+        x, y = self.grid_to_screen_position(agent.coordinates)
+        y += SQUARE_SIZE - health_bar_height
+        pygame.draw.rect(screen, "green", (x, y, health_bar_width, health_bar_height))
+        pygame.draw.rect(screen, "black", (x, y, SQUARE_SIZE, health_bar_height), 1)  # black border
         # Update the full display Surface to the screen
         pygame.display.flip()

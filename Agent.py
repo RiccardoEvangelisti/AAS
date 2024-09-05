@@ -66,18 +66,34 @@ class Player(Agent, HasEndTurn, HasMovement, HasAttack):
         self.attacks_max_number = attacks_max_number
         action = self.get_combat_action_MeleeAttack(attack_damage)
         self.combatActions[action.name] = action
+        action = self.get_combat_action_RangedAttack(attack_damage, 3)
+        self.combatActions[action.name] = action
 
 
 #############################################
 
 
-class Monster(Agent, HasEndTurn):
+class Monster(Agent, HasEndTurn, HasMovement, HasAttack):
     def __init__(
         self,
         image_path: str,
-        max_hp: int = 100,
+        max_hp: int = 50,
+        movement_speed: int = 30,
+        attack_damage: int = 5,
+        attacks_max_number: int = 1,
     ):
         Agent.__init__(self, image_path, max_hp)
 
         action = self.get_combat_action_EndTurn()
+        self.combatActions[action.name] = action
+
+        self.movement_speed = movement_speed
+        self.movement_left = self._movement_speed
+        action = self.get_combat_action_Movements()
+        for a in action:
+            self.combatActions[a.name] = a
+
+        self.attacks_left = attacks_max_number
+        self.attacks_max_number = attacks_max_number
+        action = self.get_combat_action_MeleeAttack(attack_damage)
         self.combatActions[action.name] = action

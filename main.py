@@ -160,17 +160,18 @@ def learn(state, action, reward, next_state):
 
 
 def main():
-    env = DnDEnvironment(n_squares_width=6, n_squares_height=5, _RENDER_MODE="human")
+    env = DnDEnvironment(n_squares_width=4, n_squares_height=3, _RENDER_MODE="human")
 
-    player = Player("Erik combat pose-token.png", 50)
-    monster = Player("Erik combat pose-token.png", 50)  # Monster("mimic-token.png", 100)
+    player = Player("Erik combat pose-token.png", max_hp=50)
+    monster = Player("mimic2-token.png", max_hp=100, attack_damage=10, movement_speed=15)
 
     env.place_agent(player, "top_left")
     env.place_agent(monster, "random")
 
     print(f"\nGrid:\n{env.grid.transpose()}")
 
-    num_episodes = 20
+    winners = []
+    num_episodes = 10
     for episode in range(num_episodes):
         env.reset()
 
@@ -207,14 +208,17 @@ def main():
 
             print(f"\tReward: {reward}")
 
-            pygame.time.wait(30)
+            # pygame.time.wait(30)
 
         # Save value function to a file
         with open(ql_file, "wb") as f:
             pickle.dump(q_dict, f)
 
         print(f"Episode {episode + 1}: Total Reward = {total_reward}")
+        print(f"Won {env.get_playing_agent().id} with {env.get_playing_agent().current_hp} HP left")
+        winners.append(env.get_playing_agent().id)
 
+    print(f"Winners: {winners}")
     pygame.quit()
 
 

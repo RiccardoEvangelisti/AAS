@@ -6,18 +6,36 @@ from CombatActions import CombatAction
 class Attack(CombatAction, ABC):
     @property
     @abstractmethod
-    def target(self):
+    def target_coord(self):
         pass
 
     @property
     @abstractmethod
-    def attack_damage(self):
+    def attack_damage(self) -> int:
         pass
 
     @property
     @abstractmethod
-    def attack_range(self):
+    def attack_range(self) -> int:
         pass
+
+    def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
+        if isinstance(agent, HasAttack) and not agent.is_attack_available():
+            return False
+        x, y = current_position
+
+        if isinstance(self, Attack):
+            min_cell_x = max(0, x - self.attack_range)
+            max_cell_x = min(n_squares_width - 1, x + self.attack_range)
+            min_cell_y = max(0, y - self.attack_range)
+            max_cell_y = min(n_squares_height - 1, y + self.attack_range)
+
+            for cell_x in range(min_cell_x, max_cell_x + 1):
+                for cell_y in range(min_cell_y, max_cell_y + 1):
+                    if (cell_x, cell_y) != (x, y) and grid[cell_x, cell_y] != 0:
+                        self.target = ((cell_x, cell_y), grid[cell_x, cell_y])
+                        return True
+        return False
 
 
 #########################################
@@ -29,33 +47,46 @@ class MeleeAttack(Attack):
         self._attack_damage = attack_damage
         self._attack_range = 1
 
-    def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
-        if isinstance(agent, HasAttack) and not agent.is_attack_available():
-            return False
-        x, y = current_position
+    @property
+    def name(self):
+        return self._name
 
-        min_cell_x = max(0, x - self._attack_range)
-        max_cell_x = min(n_squares_width - 1, x + self._attack_range)
-        min_cell_y = max(0, y - self._attack_range)
-        max_cell_y = min(n_squares_height - 1, y + self._attack_range)
+    @property
+    def target_coord(self):
+        return self._target_coord
+    
+    @target_coord.setter
+    def target_coord(self, value: tuple[tuple[int, int], int]):
+        self._target_coord = value
 
-        for cell_x in range(min_cell_x, max_cell_x + 1):
-            for cell_y in range(min_cell_y, max_cell_y + 1):
-                if (cell_x, cell_y) != (x, y) and grid[cell_x, cell_y] != 0:
-                    self.target = ((cell_x, cell_y), grid[cell_x, cell_y])
-                    return True
-        return False
+    @property
+    def attack_damage(self) -> int:
+        return self._attack_damage
+
+    @property
+    def attack_range(self) -> int:
+        return self._attack_range
+
+
+#########################################
+
+
+class RangeAttack(Attack):
+    def __init__(self, attack_damage, attack_range):
+        self._name = "RangeAttack"
+        self._attack_damage = attack_damage
+        self._attack_range = attack_range
 
     @property
     def name(self):
         return self._name
 
     @property
-    def target(self):
+    def target_coord(self):
         return self._target_coord
 
-    @target.setter
-    def target(self, value: tuple[tuple[int, int], int]):
+    @target_coord.setter
+    def target_coord(self, value: tuple[tuple[int, int], int]):
         self._target_coord = value
 
     @property
@@ -92,3 +123,6 @@ class HasAttack:
 
     def get_combat_action_MeleeAttack(self, attack_damage):
         return MeleeAttack(attack_damage)
+
+    def get_combat_action_RangedAttack(self, attack_damage, attack_range):
+        return RangeAttack(attack_damage, attack_range)
