@@ -175,6 +175,7 @@ def main():
     num_episodes = 100
     for episode in range(num_episodes):
         env.reset()
+        pygame.display.set_caption(f"Episode {episode + 1}")
 
         done = False
 
