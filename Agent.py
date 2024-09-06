@@ -1,35 +1,57 @@
-from abc import ABC, abstractmethod
-
 import pygame
-from CombatActions import CombatAction
-from HasMovement import HasMovement
-from HasAttack import HasAttack
-from HasEndTurn import HasEndTurn
+from combat_actions.CombatActions import CombatAction
+from agent_interfaces.HasHP import HasHP
+from agent_interfaces.HasMovement import HasMovement
+from agent_interfaces.HasAttack import HasAttack
+from agent_interfaces.HasEndTurn import HasEndTurn
 
 
-class Agent:
-    def __init__(self, image_path: str, max_hp: int, RENDER_MODE="human"):
+class Agent(HasHP):
+
+    # id
+    @property
+    def id(self) -> int:
+        return self._id
+
+    @id.setter
+    def id(self, value: int):
+        self._id = value
+
+    # coordinates
+    @property
+    def coordinates(self) -> tuple[int, int]:
+        return self._coordinates
+
+    @coordinates.setter
+    def coordinates(self, value: tuple[int, int]):
+        self._coordinates = value
+
+    # default_coordinates
+    @property
+    def default_coordinates(self) -> tuple[int, int] | str:
+        return self._default_coordinates
+
+    @default_coordinates.setter
+    def default_coordinates(self, value: tuple[int, int] | str):
+        self._default_coordinates = value
+
+    # combatActions: dictionnary of {CombatActions.name: CombatAction}
+    @property
+    def combatActions(self) -> dict[str, CombatAction]:
+        return self._combatActions
+
+    @combatActions.setter
+    def combatActions(self, value: dict[str, CombatAction]):
+        self._combatActions = value
+
+    # Constructor
+    def __init__(self, image_path: str, RENDER_MODE="human"):
         RENDER_MODE = RENDER_MODE
 
-        self.id: int
-        self.coordinates: tuple[int, int]
-        self.default_coordinates: tuple[int, int]
-
-        self.max_hp = max_hp
-        self.current_hp = max_hp
-        self.combatActions = {}  # action.name, action
+        self.combatActions = {}
 
         if RENDER_MODE == "human":
             self.image_obj = pygame.image.load(image_path)
-
-    def is_alive(self) -> bool:
-        return self.current_hp > 0
-
-    def took_damage(self, damage: int):
-        self.current_hp -= damage
-
-    def reset_maxHP(self):
-        self.current_hp = self.max_hp
 
     def available_actions(self, grid, n_squares_height, n_squares_width) -> list[CombatAction]:
         available_actions: list[CombatAction] = []
@@ -38,36 +60,39 @@ class Agent:
                 available_actions.append(combat_action)
         return available_actions
 
+    def save_action(self, action: CombatAction):
+        self.combatActions[action.name] = action
+
+    def save_actions(self, action: list[CombatAction]):
+        for act in action:
+            self.save_action(act)
+
 
 ########################################################
 
 
-class Player(Agent, HasEndTurn, HasMovement, HasAttack):
+class Player(Agent, HasHP, HasEndTurn, HasMovement, HasAttack):
     def __init__(
         self,
         image_path: str,
         max_hp: int = 50,
-        movement_speed: int = 30,
+        movement_speed: int = 6,
         attack_damage: int = 5,
         attacks_max_number: int = 1,
     ):
-        Agent.__init__(self, image_path, max_hp)
+        Agent.__init__(self, image_path)
 
-        action = self.get_combat_action_EndTurn()
-        self.combatActions[action.name] = action
+        HasHP.__init__(self, max_hp)
 
-        self.movement_speed = movement_speed
-        self.movement_left = self._movement_speed
-        action = self.get_combat_action_Movements()
-        for a in action:
-            self.combatActions[a.name] = a
+        HasEndTurn.__init__(self)
+        self.save_action(self.get_combat_action_EndTurn())
 
-        self.attacks_left = attacks_max_number
-        self.attacks_max_number = attacks_max_number
-        action = self.get_combat_action_MeleeAttack(attack_damage)
-        self.combatActions[action.name] = action
-        action = self.get_combat_action_RangedAttack(attack_damage, 3)
-        self.combatActions[action.name] = action
+        HasMovement.__init__(self, movement_speed)
+        self.save_actions(self.get_all_movements())
+
+        HasAttack.__init__(self, attacks_max_number)
+        self.save_action(self.get_combat_action_MeleeAttack(attack_damage))
+        self.save_action(self.get_combat_action_RangedAttack(attack_damage, 3))
 
 
 #############################################
@@ -82,18 +107,15 @@ class Monster(Agent, HasEndTurn, HasMovement, HasAttack):
         attack_damage: int = 5,
         attacks_max_number: int = 1,
     ):
-        Agent.__init__(self, image_path, max_hp)
+        Agent.__init__(self, image_path)
 
-        action = self.get_combat_action_EndTurn()
-        self.combatActions[action.name] = action
+        HasHP.__init__(self, max_hp)
 
-        self.movement_speed = movement_speed
-        self.movement_left = self._movement_speed
-        action = self.get_combat_action_Movements()
-        for a in action:
-            self.combatActions[a.name] = a
+        HasEndTurn.__init__(self)
+        self.save_action(self.get_combat_action_EndTurn())
 
-        self.attacks_left = attacks_max_number
-        self.attacks_max_number = attacks_max_number
-        action = self.get_combat_action_MeleeAttack(attack_damage)
-        self.combatActions[action.name] = action
+        HasMovement.__init__(self, movement_speed)
+        self.save_actions(self.get_all_movements())
+
+        HasAttack.__init__(self, attacks_max_number)
+        self.save_action(self.get_combat_action_MeleeAttack(attack_damage))

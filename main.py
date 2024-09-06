@@ -4,9 +4,9 @@ import random
 import pygame
 import numpy as np
 
-from CombatActions import CombatAction
-from HasAttack import Attack, MeleeAttack
-from HasMovement import HasMovement
+from combat_actions.Attack import Attack
+from combat_actions.CombatActions import CombatAction
+from agent_interfaces.HasMovement import HasMovement
 
 from Agent import Agent, HasAttack, Monster, Player
 from DnDEnvironment import DnDEnvironment
@@ -163,8 +163,8 @@ def learn(state, action, reward, next_state):
 def main():
     env = DnDEnvironment(n_squares_width=6, n_squares_height=5, _RENDER_MODE="human")
 
-    player = Player("Erik combat pose-token.png", max_hp=50)
-    monster = Monster("mimic2-token.png", max_hp=100, attack_damage=10, movement_speed=15)
+    player = Player("pictures/Erik combat pose-token.png", max_hp=50)
+    monster = Monster("pictures/mimic2-token.png", max_hp=100, attack_damage=10, movement_speed=15)
 
     env.place_agent(player, "random")
     env.place_agent(monster, "random")

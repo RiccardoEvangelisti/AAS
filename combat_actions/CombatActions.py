@@ -3,9 +3,8 @@ from abc import ABC, abstractmethod
 
 class CombatAction(ABC):
     @property
-    @abstractmethod
-    def name(self):
-        pass
+    def name(self) -> str:
+        return self._name
 
     @name.setter
     def name(self, value):

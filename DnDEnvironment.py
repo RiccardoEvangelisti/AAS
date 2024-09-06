@@ -42,23 +42,23 @@ class DnDEnvironment:
             if isinstance(agent, HasAttack):
                 agent.reset_attacks()
             # Reset position
-            self.update_occupied_position(agent.coordinates, agent.default_coordinates, agent.id)
+            self.update_occupied_position(
+                agent.coordinates, self.get_empty_cell_coordinates(agent.default_coordinates), agent.id
+            )
 
     def takeAction(self, action):
         playing_agent = self.get_playing_agent()
 
         if action.name == "MeleeAttack" and isinstance(playing_agent, HasAttack):
             # Get the agent that is being attacked
-            _, targetID = action.target
-            target_agent = self.agents[targetID - 1]
+            target_agent = self.agents[action.target_id - 1]
             # Target takes damage
             target_agent.took_damage(action.attack_damage)
             playing_agent.attacked()
 
         if action.name == "RangeAttack" and isinstance(playing_agent, HasAttack):
             # Get the agent that is being attacked
-            _, targetID = action.target
-            target_agent = self.agents[targetID - 1]
+            target_agent = self.agents[action.target_id - 1]
             # Target takes damage
             target_agent.took_damage(action.attack_damage)
             playing_agent.attacked()
@@ -176,12 +176,14 @@ class DnDEnvironment:
         if agent.id == 1:
             self.playing_agentID = agent.id
 
+        agent.default_coordinates = position
+
         coordinates = self.get_empty_cell_coordinates(position)
         self.update_occupied_position(coordinates, coordinates, agent.id)
-        agent.default_coordinates = coordinates
 
     def get_empty_cell_coordinates(
-        self, position: tuple[int, int] | Literal["top_left", "top_right", "bottom_left", "bottom_right", "random"]
+        self,
+        position: tuple[int, int] | Literal["top_left", "top_right", "bottom_left", "bottom_right", "random"] | str,
     ):
         if type(position) == tuple:
             if (
@@ -224,7 +226,7 @@ class DnDEnvironment:
     def render_grid(self):
         screen = pygame.display.get_surface()
         background_image = pygame.transform.smoothscale(
-            pygame.image.load("background.png"), (self.space_width, self.space_height)
+            pygame.image.load("pictures/background.png"), (self.space_width, self.space_height)
         )
         # Color the screen
         screen.blit(background_image, (0, 0))
