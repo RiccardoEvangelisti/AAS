@@ -2,6 +2,7 @@ from combat_actions.Attack import MeleeAttack, RangedAttack
 
 
 class HasAttack:
+    """The agent can attack"""
 
     # attacks_max_number
     @property
@@ -27,12 +28,15 @@ class HasAttack:
         self.attacks_left = attacks_max_number
 
     def attacked(self):
+        """The agent has attacked"""
         self.attacks_left -= 1
 
     def is_attack_available(self) -> bool:
+        """Check if the agent can attack"""
         return self.attacks_left > 0
 
     def reset_attacks(self):
+        """Reset the number of attacks left to the maximum"""
         self.attacks_left = self.attacks_max_number
 
     def get_combat_action_MeleeAttack(self, attack_damage):

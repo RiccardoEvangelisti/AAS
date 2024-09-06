@@ -54,6 +54,7 @@ class Agent(HasHP):
             self.image_obj = pygame.image.load(image_path)
 
     def available_actions(self, grid, n_squares_height, n_squares_width) -> list[CombatAction]:
+        """For all the actions that the agent can do, check which are available"""
         available_actions: list[CombatAction] = []
         for _, combat_action in self.combatActions.items():
             if combat_action.is_available(self, self.coordinates, grid, n_squares_height, n_squares_width):
@@ -68,6 +69,8 @@ class Agent(HasHP):
             self.save_action(act)
 
 
+########################################################
+#### CUSTOM AGENTS #####################################
 ########################################################
 
 

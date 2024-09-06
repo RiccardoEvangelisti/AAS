@@ -9,6 +9,7 @@ SQUARE_SIZE = 100
 
 
 class DnDEnvironment:
+
     def __init__(self, n_squares_width=6, n_squares_height=5, _RENDER_MODE="human"):
 
         global RENDER_MODE
@@ -23,10 +24,10 @@ class DnDEnvironment:
         if RENDER_MODE == "human":
             self.space_width = n_squares_width * SQUARE_SIZE
             self.space_height = n_squares_height * SQUARE_SIZE
-            self.render()
+            self.render_screenbase()
 
     def reset(self):
-        # Set playing agent to the first agent added to the environment
+        # Set playing agent to the agent first added to the environment
         if len(self.agents) > 0:
             self.playing_agentID = self.agents[0].id
         else:
@@ -125,10 +126,10 @@ class DnDEnvironment:
     def change_turn(self):
         playing_agent = self.get_playing_agent()
 
-        # Reset Movement speed
+        # Full Movement speed
         if isinstance(playing_agent, HasMovement):
             playing_agent.reset_movement()
-        # Reset attacks left
+        # Full attacks left
         if isinstance(playing_agent, HasAttack):
             playing_agent.reset_attacks()
 
@@ -217,7 +218,7 @@ class DnDEnvironment:
             coordinates = self.get_empty_cell_coordinates("random")
         return coordinates
 
-    def render(self):
+    def render_screenbase(self):
         # Create the screen
         pygame.display.set_mode((self.space_width, self.space_height))
         # Update the full display Surface to the screen
@@ -236,7 +237,7 @@ class DnDEnvironment:
         for y in range(0, self.space_height, SQUARE_SIZE):
             pygame.draw.line(screen, "black", (0, y), (self.space_width, y))
         # Update the full display Surface to the screen
-        pygame.display.update()
+        pygame.display.flip()
 
     def grid_to_screen_position(self, grid_position):
         return (grid_position[0] * SQUARE_SIZE, grid_position[1] * SQUARE_SIZE)

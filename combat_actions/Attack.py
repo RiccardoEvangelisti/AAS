@@ -45,22 +45,27 @@ class Attack(CombatAction, ABC):
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
         from agent_interfaces.HasAttack import HasAttack
 
+        # Check if the agent has at least one attack available
         if isinstance(agent, HasAttack) and not agent.is_attack_available():
             return False
+
         x, y = current_position
 
-        if isinstance(self, Attack):
-            min_cell_x = max(0, x - self.attack_range)
-            max_cell_x = min(n_squares_width - 1, x + self.attack_range)
-            min_cell_y = max(0, y - self.attack_range)
-            max_cell_y = min(n_squares_height - 1, y + self.attack_range)
+        # Take the minimim and maximum cell coordinates that the agent can attack, based on his attack range and his position on the grid
+        min_cell_x = max(0, x - self.attack_range)
+        max_cell_x = min(n_squares_width - 1, x + self.attack_range)
+        min_cell_y = max(0, y - self.attack_range)
+        max_cell_y = min(n_squares_height - 1, y + self.attack_range)
 
-            for cell_x in range(min_cell_x, max_cell_x + 1):
-                for cell_y in range(min_cell_y, max_cell_y + 1):
-                    if (cell_x, cell_y) != (x, y) and grid[cell_x, cell_y] != 0:
-                        self.target_coord = (cell_x, cell_y)
-                        self.target_id = grid[cell_x, cell_y]
-                        return True
+        # Check if there is an enemy within range of the attack
+        # Return the first enemy found
+        for cell_x in range(min_cell_x, max_cell_x + 1):
+            for cell_y in range(min_cell_y, max_cell_y + 1):
+                if (cell_x, cell_y) != (x, y) and grid[cell_x, cell_y] != 0:
+                    self.target_coord = (cell_x, cell_y)  # save its coordinates
+                    self.target_id = grid[cell_x, cell_y]  # save its id
+                    return True
+
         return False
 
 
@@ -69,9 +74,9 @@ class Attack(CombatAction, ABC):
 
 class MeleeAttack(Attack):
     def __init__(self, attack_damage):
-        self._name = "MeleeAttack"
-        self._attack_damage = attack_damage
-        self._attack_range = 1
+        self.name = "MeleeAttack"
+        self.attack_damage = attack_damage
+        self.attack_range = 1
 
 
 #########################################
@@ -79,6 +84,6 @@ class MeleeAttack(Attack):
 
 class RangedAttack(Attack):
     def __init__(self, attack_damage, attack_range):
-        self._name = "RangeAttack"
-        self._attack_damage = attack_damage
-        self._attack_range = attack_range
+        self.name = "RangeAttack"
+        self.attack_damage = attack_damage
+        self.attack_range = attack_range

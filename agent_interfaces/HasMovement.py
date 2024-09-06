@@ -2,19 +2,42 @@ from combat_actions.Movement import *
 
 
 class HasMovement:
+    """The agent can move"""
 
+    # movement_speed
+    @property
+    def movement_speed(self) -> int:
+        return self._movement_speed
+
+    @movement_speed.setter
+    def movement_speed(self, value: int):
+        self._movement_speed = value
+
+    # movement_left
+    @property
+    def movement_left(self) -> int:
+        return self._movement_left
+
+    @movement_left.setter
+    def movement_left(self, value: int):
+        self._movement_left = value
+
+    # Constructor
     def __init__(self, movement_speed: int):
-        self._movement_speed = movement_speed
-        self._movement_left = movement_speed
+        self.movement_speed = movement_speed
+        self.movement_left = movement_speed
 
     def moved_of(self, n_cells: int):
-        self._movement_left -= n_cells
+        """Decrease the movement of n_cells"""
+        self.movement_left -= n_cells
 
     def is_movement_available(self) -> bool:
-        return self._movement_left > 0
+        """Check if the agent can move"""
+        return self.movement_left > 0
 
     def reset_movement(self):
-        self._movement_left = self._movement_speed
+        """Reset the agent's movement to the maximum"""
+        self.movement_left = self.movement_speed
 
     # Getters
     def get_combat_action_Movement_UP(self):

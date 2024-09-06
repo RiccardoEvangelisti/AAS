@@ -34,7 +34,7 @@ class State:
 
     def update_movement_available(self, agent: Agent):
         if isinstance(agent, HasMovement):
-            self.movement_remaining = agent._movement_left
+            self.movement_remaining = agent.movement_left
         else:
             self.movement_remaining = 0
 
