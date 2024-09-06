@@ -105,7 +105,7 @@ GAMMA = 0.9  # Discount factor
 
 
 # Load value function from a file
-ql_file = "q_learning_values.pkl"
+ql_file = "outputs/q_learning_values.pkl"
 if os.path.exists(ql_file):
     with open(ql_file, "rb") as f:
         q_dict = pickle.load(f)
