@@ -11,38 +11,38 @@ class Agent(HasHP):
     # id
     @property
     def id(self) -> int:
-        return self._id
+        return self.__id
 
     @id.setter
     def id(self, value: int):
-        self._id = value
+        self.__id = value
 
     # coordinates
     @property
     def coordinates(self) -> tuple[int, int]:
-        return self._coordinates
+        return self.__coordinates
 
     @coordinates.setter
     def coordinates(self, value: tuple[int, int]):
-        self._coordinates = value
+        self.__coordinates = value
 
     # default_coordinates
     @property
     def default_coordinates(self) -> tuple[int, int] | str:
-        return self._default_coordinates
+        return self.__default_coordinates
 
     @default_coordinates.setter
     def default_coordinates(self, value: tuple[int, int] | str):
-        self._default_coordinates = value
+        self.__default_coordinates = value
 
     # combatActions: dict of {CombatActions.name: CombatAction}
     @property
     def combatActions(self) -> dict[str, CombatAction]:
-        return self._combatActions
+        return self.__combatActions
 
     @combatActions.setter
     def combatActions(self, value: dict[str, CombatAction]):
-        self._combatActions = value
+        self.__combatActions = value
 
     # Constructor
     def __init__(self, image_path: str, RENDER_MODE="human"):

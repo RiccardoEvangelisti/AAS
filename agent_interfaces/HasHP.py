@@ -4,20 +4,20 @@ class HasHP:
     # max_hp
     @property
     def max_hp(self):
-        return self._max_hp
+        return self.__max_hp
 
     @max_hp.setter
     def max_hp(self, value: int):
-        self._max_hp = value
+        self.__max_hp = value
 
     # current_hp
     @property
     def current_hp(self):
-        return self._current_hp
+        return self.__current_hp
 
     @current_hp.setter
     def current_hp(self, value: int):
-        self._current_hp = value
+        self.__current_hp = value
 
     # Constructor
     def __init__(self, max_hp) -> None:

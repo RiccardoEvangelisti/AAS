@@ -8,38 +8,38 @@ class Attack(CombatAction, ABC):
     # attack_damage
     @property
     def attack_damage(self) -> int:
-        return self._attack_damage
+        return self.__attack_damage
 
     @attack_damage.setter
     def attack_damage(self, value: int):
-        self._attack_damage = value
+        self.__attack_damage = value
 
     # attack_range
     @property
     def attack_range(self) -> int:
-        return self._attack_range
+        return self.__attack_range
 
     @attack_range.setter
     def attack_range(self, value: int):
-        self._attack_range = value
+        self.__attack_range = value
 
     # target_coord
     @property
     def target_coord(self) -> tuple[int, int]:
-        return self._target_coord
+        return self.__target_coord
 
     @target_coord.setter
     def target_coord(self, value: tuple[int, int]):
-        self._target_coord = value
+        self.__target_coord = value
 
     # target_id
     @property
     def target_id(self) -> int:
-        return self._target_id
+        return self.__target_id
 
     @target_id.setter
     def target_id(self, value: int):
-        self._target_id = value
+        self.__target_id = value
 
     # is_available
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:

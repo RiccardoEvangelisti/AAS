@@ -8,11 +8,11 @@ class CombatAction(ABC):
     @property
     def name(self) -> str:
         """Name of the action"""
-        return self._name
+        return self.__name
 
     @name.setter
     def name(self, value):
-        self._name = value
+        self.__name = value
 
     @abstractmethod
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:

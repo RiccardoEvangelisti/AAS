@@ -7,11 +7,11 @@ class HasMovement:
     # movement_speed
     @property
     def movement_speed(self) -> int:
-        return self._movement_speed
+        return self.__movement_speed
 
     @movement_speed.setter
     def movement_speed(self, value: int):
-        self._movement_speed = value
+        self.__movement_speed = value
 
     # movement_left
     @property

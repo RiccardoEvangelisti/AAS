@@ -7,20 +7,20 @@ class HasAttack:
     # attacks_max_number
     @property
     def attacks_max_number(self) -> int:
-        return self._attacks_max_number
+        return self.__attacks_max_number
 
     @attacks_max_number.setter
     def attacks_max_number(self, value: int):
-        self._attacks_max_number = value
+        self.__attacks_max_number = value
 
     # attacks_left
     @property
     def attacks_left(self) -> int:
-        return self._attacks_left
+        return self.__attacks_left
 
     @attacks_left.setter
     def attacks_left(self, value: int):
-        self._attacks_left = value
+        self.__attacks_left = value
 
     # Constructor
     def __init__(self, attacks_max_number: int):
