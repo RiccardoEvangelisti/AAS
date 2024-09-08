@@ -1,6 +1,6 @@
 # Graphics
 RENDER:
-    mode: "human"
+    mode: #"human"
     wait_timestep_ms: 0
 
 # Grid
@@ -35,5 +35,9 @@ Q_Learning: &Q_Learning
     pickle_filename: "outputs/q_learning_values.pkl"
 
 # Training
-num_episodes: 2
+num_episodes: 10
 algorithm: *Q_Learning # NEEDS to be an alias of the algorithm (the "*")
+
+# Statistics
+statistics:
+    pickle_filename: "statistics/q_learning_statistics.pkl"

@@ -104,7 +104,7 @@ def main():
     env.place_agent(monster, config.monster.default_coordinates)
 
     # Initialize statistics
-    stat = Statistics()
+    stat = Statistics(config.statistics.pickle_filename)
 
     # Take algorithm from config
     if config.algorithm.name == config.Q_Learning.name:
@@ -114,7 +114,7 @@ def main():
     # Episodes loop
     for episode in range(config.num_episodes):
         # Statistics and render
-        episode_stat = EpisodeStatistics(episode + 1, [player.id, monster.id])
+        episode_stat = EpisodeStatistics(episode + 1, [player.name, monster.name])
         if config.RENDER.mode == "human":
             pygame.display.set_caption(f"Episode {episode + 1}")
 
@@ -130,7 +130,7 @@ def main():
         # Steps loop
         while not done:
             print(
-                "Progess:",
+                f"Episode {episode+1} progess: %",
                 (
                     max(
                         100 - (100 * env.get_playing_agent().current_hp / env.get_playing_agent().max_hp),
@@ -138,7 +138,6 @@ def main():
                         - (100 * env.get_not_playing_agents()[0].current_hp / env.get_not_playing_agents()[0].max_hp),
                     )
                 ),
-                "%",
                 end="\r",
             )
             # Get available actions for the playing agent
@@ -163,7 +162,7 @@ def main():
             state = next_state
 
             # Statistics and render
-            episode_stat.actions_taken[env.playing_agentID].append(action.name)
+            episode_stat.actions_taken[env.get_playing_agent().name].append(action.name)
             episode_stat.total_reward += reward
             if config.RENDER.mode == "human":
                 pygame.time.wait(config.RENDER.wait_timestep_ms)
@@ -173,11 +172,11 @@ def main():
 
         # Statistics
         episode_stat.winner_name = env.get_playing_agent().name
-        episode_stat.enemy_hp_remaining = env.get_not_playing_agents()[0].current_hp
-        stat.episode_statistics.append(episode_stat)
+        episode_stat.winner_hp_remaining = env.get_playing_agent().current_hp
+        stat.episode_stat_list.append(episode_stat)
 
     # Statistics and render
-    stat.print()
+    stat.save_statistics(config.statistics.pickle_filename)
     pygame.quit()
 
 
