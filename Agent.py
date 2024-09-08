@@ -17,6 +17,15 @@ class Agent(HasHP):
     def id(self, value: int):
         self.__id = value
 
+    # name
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @name.setter
+    def name(self, value: str):
+        self.__name = value
+
     # coordinates
     @property
     def coordinates(self) -> tuple[int, int]:
@@ -45,9 +54,8 @@ class Agent(HasHP):
         self.__combatActions = value
 
     # Constructor
-    def __init__(self, image_path: str, RENDER_MODE="human"):
-        RENDER_MODE = RENDER_MODE
-
+    def __init__(self, name: str, image_path: str, RENDER_MODE: str):
+        self.name = name
         self.combatActions = {}
 
         if RENDER_MODE == "human":
@@ -77,13 +85,15 @@ class Agent(HasHP):
 class Player(Agent, HasHP, HasEndTurn, HasMovement, HasAttack):
     def __init__(
         self,
+        name: str,
         image_path: str,
         max_hp: int,
         movement_speed: int,
         attack_damage: int,
         attacks_max_number: int,
+        RENDER_MODE: str,
     ):
-        Agent.__init__(self, image_path)
+        Agent.__init__(self, name, image_path, RENDER_MODE)
 
         HasHP.__init__(self, max_hp)
 
@@ -104,13 +114,15 @@ class Player(Agent, HasHP, HasEndTurn, HasMovement, HasAttack):
 class Monster(Agent, HasEndTurn, HasMovement, HasAttack):
     def __init__(
         self,
+        name: str,
         image_path: str,
         max_hp: int,
         movement_speed: int,
         attack_damage: int,
         attacks_max_number: int,
+        RENDER_MODE: str,
     ):
-        Agent.__init__(self, image_path)
+        Agent.__init__(self, name, image_path, RENDER_MODE)
 
         HasHP.__init__(self, max_hp)
 

@@ -7,14 +7,14 @@ from Agent import Agent, HasAttack
 
 class State:
     """
-    x coordinate of playing agent
-    y coordinate of playing agent
-    x coordinate of enemy agent
-    y coordinate of enemy agent
-    current HP of playing agent
-    damage dealt to enemy agent
-    how many attack actions the playing agent has left
-    how many movement actions the playing agent has left
+    x coordinate of playing agent\n
+    y coordinate of playing agent\n
+    x coordinate of enemy agent\n
+    y coordinate of enemy agent\n
+    current HP of playing agent\n
+    damage dealt to enemy agent\n
+    how many attack actions the playing agent has left\n
+    how many movement actions the playing agent has left\n
     """
 
     def __init__(self, player: Agent, enemy: Agent):

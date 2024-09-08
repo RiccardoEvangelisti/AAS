@@ -4,6 +4,8 @@ import pygame
 import numpy as np
 
 from Agent import *
+from combat_actions.Attack import MeleeAttack, RangedAttack
+from combat_actions.Movement import *
 
 SQUARE_SIZE = 100
 
@@ -50,14 +52,14 @@ class DnDEnvironment:
     def takeAction(self, action):
         playing_agent = self.get_playing_agent()
 
-        if action.name == "MeleeAttack" and isinstance(playing_agent, HasAttack):
+        if action.name == MeleeAttack.name and isinstance(playing_agent, HasAttack):
             # Get the agent that is being attacked
             target_agent = self.agents[action.target_id - 1]
             # Target takes damage
             target_agent.took_damage(action.attack_damage)
             playing_agent.attacked()
 
-        if action.name == "RangeAttack" and isinstance(playing_agent, HasAttack):
+        if action.name == RangedAttack.name and isinstance(playing_agent, HasAttack):
             # Get the agent that is being attacked
             target_agent = self.agents[action.target_id - 1]
             # Target takes damage
@@ -67,56 +69,56 @@ class DnDEnvironment:
         if action.name == "EndTurn":
             self.change_turn()
 
-        if action.name == "Movement_UP" and isinstance(playing_agent, HasMovement):
+        if action.name == Movement_UP.name and isinstance(playing_agent, HasMovement):
             # Get the new position
             new_position = (playing_agent.coordinates[0], playing_agent.coordinates[1] - 1)
             # Update the grid
             self.update_occupied_position(playing_agent.coordinates, new_position, playing_agent.id)
             playing_agent.moved_of(1)
 
-        if action.name == "Movement_DOWN" and isinstance(playing_agent, HasMovement):
+        if action.name == Movement_DOWN.name and isinstance(playing_agent, HasMovement):
             # Get the new position
             new_position = (playing_agent.coordinates[0], playing_agent.coordinates[1] + 1)
             # Update the grid
             self.update_occupied_position(playing_agent.coordinates, new_position, playing_agent.id)
             playing_agent.moved_of(1)
 
-        if action.name == "Movement_LEFT" and isinstance(playing_agent, HasMovement):
+        if action.name == Movement_LEFT.name and isinstance(playing_agent, HasMovement):
             # Get the new position
             new_position = (playing_agent.coordinates[0] - 1, playing_agent.coordinates[1])
             # Update the grid
             self.update_occupied_position(playing_agent.coordinates, new_position, playing_agent.id)
             playing_agent.moved_of(1)
 
-        if action.name == "Movement_RIGHT" and isinstance(playing_agent, HasMovement):
+        if action.name == Movement_RIGHT.name and isinstance(playing_agent, HasMovement):
             # Get the new position
             new_position = (playing_agent.coordinates[0] + 1, playing_agent.coordinates[1])
             # Update the grid
             self.update_occupied_position(playing_agent.coordinates, new_position, playing_agent.id)
             playing_agent.moved_of(1)
 
-        if action.name == "Movement_UP_LEFT" and isinstance(playing_agent, HasMovement):
+        if action.name == Movement_UP_LEFT.name and isinstance(playing_agent, HasMovement):
             # Get the new position
             new_position = (playing_agent.coordinates[0] - 1, playing_agent.coordinates[1] - 1)
             # Update the grid
             self.update_occupied_position(playing_agent.coordinates, new_position, playing_agent.id)
             playing_agent.moved_of(1)
 
-        if action.name == "Movement_UP_RIGHT" and isinstance(playing_agent, HasMovement):
+        if action.name == Movement_UP_RIGHT.name and isinstance(playing_agent, HasMovement):
             # Get the new position
             new_position = (playing_agent.coordinates[0] + 1, playing_agent.coordinates[1] - 1)
             # Update the grid
             self.update_occupied_position(playing_agent.coordinates, new_position, playing_agent.id)
             playing_agent.moved_of(1)
 
-        if action.name == "Movement_DOWN_LEFT" and isinstance(playing_agent, HasMovement):
+        if action.name == Movement_DOWN_LEFT.name and isinstance(playing_agent, HasMovement):
             # Get the new position
             new_position = (playing_agent.coordinates[0] - 1, playing_agent.coordinates[1] + 1)
             # Update the grid
             self.update_occupied_position(playing_agent.coordinates, new_position, playing_agent.id)
             playing_agent.moved_of(1)
 
-        if action.name == "Movement_DOWN_RIGHT" and isinstance(playing_agent, HasMovement):
+        if action.name == Movement_DOWN_RIGHT.name and isinstance(playing_agent, HasMovement):
             # Get the new position
             new_position = (playing_agent.coordinates[0] + 1, playing_agent.coordinates[1] + 1)
             # Update the grid
@@ -144,6 +146,9 @@ class DnDEnvironment:
             self.render_grid()
             for agent in self.agents:
                 self.render_agent(agent)
+
+    def get_agent_byID(self, agentID: int) -> Agent:
+        return self.agents[agentID - 1]
 
     def get_playing_agent(self) -> Agent:
         return self.agents[self.playing_agentID - 1]

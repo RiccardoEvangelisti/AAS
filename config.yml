@@ -14,6 +14,7 @@ player:
     attack_damage: 5
     attacks_max_number: 1
     picture_path: "pictures/Erik combat pose-token.png"
+    name: "Erik"
     default_coordinates: "random"
 
 monster:
@@ -22,15 +23,17 @@ monster:
     attack_damage: 10
     attacks_max_number: 1
     picture_path: "pictures/mimic2-token.png"
+    name: "Mimic"
     default_coordinates: "random"
 
+# Q_learning parameters
+Q_Learning: &Q_Learning
+    name: "Q_Learning"
+    EPSILON: 0.2 # Exploration rate
+    ALPHA: 0.1 # Learning rate
+    GAMMA: 0.9 # Discount factor
+    pickle_filename: "outputs/q_learning_values.pkl"
 
 # Training
-num_episodes : 100
-
-
-# Q_learning parameters
-Q_learning:
-    EPSILON : 0.2  # Exploration rate
-    ALPHA : 0.1  # Learning rate
-    GAMMA : 0.9  # Discount factor
+num_episodes: 2
+algorithm: *Q_Learning # NEEDS to be an alias of the algorithm (the "*")

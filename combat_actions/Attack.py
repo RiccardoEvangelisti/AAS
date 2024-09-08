@@ -73,8 +73,9 @@ class Attack(CombatAction, ABC):
 
 
 class MeleeAttack(Attack):
+    name: str = "MeleeAttack"
+
     def __init__(self, attack_damage):
-        self.name = "MeleeAttack"
         self.attack_damage = attack_damage
         self.attack_range = 1
 
@@ -83,7 +84,8 @@ class MeleeAttack(Attack):
 
 
 class RangedAttack(Attack):
+    name: str = "RangedAttack"
+
     def __init__(self, attack_damage, attack_range):
-        self.name = "RangeAttack"
         self.attack_damage = attack_damage
         self.attack_range = attack_range

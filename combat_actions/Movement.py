@@ -2,8 +2,8 @@ from combat_actions.CombatActions import CombatAction
 
 
 class Movement_UP(CombatAction):
-    def __init__(self):
-        self.name = "Movement_UP"
+
+    name: str = "Movement_UP"
 
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
         from agent_interfaces.HasMovement import HasMovement
@@ -15,8 +15,8 @@ class Movement_UP(CombatAction):
 
 
 class Movement_DOWN(CombatAction):
-    def __init__(self):
-        self.name = "Movement_DOWN"
+
+    name: str = "Movement_DOWN"
 
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
         from agent_interfaces.HasMovement import HasMovement
@@ -28,8 +28,7 @@ class Movement_DOWN(CombatAction):
 
 
 class Movement_LEFT(CombatAction):
-    def __init__(self):
-        self.name = "Movement_LEFT"
+    name: str = "Movement_LEFT"
 
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
         from agent_interfaces.HasMovement import HasMovement
@@ -41,8 +40,7 @@ class Movement_LEFT(CombatAction):
 
 
 class Movement_RIGHT(CombatAction):
-    def __init__(self):
-        self.name = "Movement_RIGHT"
+    name: str = "Movement_RIGHT"
 
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
         from agent_interfaces.HasMovement import HasMovement
@@ -54,8 +52,7 @@ class Movement_RIGHT(CombatAction):
 
 
 class Movement_UP_LEFT(CombatAction):
-    def __init__(self):
-        self.name = "Movement_UP_LEFT"
+    name: str = "Movement_UP_LEFT"
 
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
         from agent_interfaces.HasMovement import HasMovement
@@ -67,8 +64,7 @@ class Movement_UP_LEFT(CombatAction):
 
 
 class Movement_UP_RIGHT(CombatAction):
-    def __init__(self):
-        self.name = "Movement_UP_RIGHT"
+    name: str = "Movement_UP_RIGHT"
 
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
         from agent_interfaces.HasMovement import HasMovement
@@ -80,8 +76,7 @@ class Movement_UP_RIGHT(CombatAction):
 
 
 class Movement_DOWN_LEFT(CombatAction):
-    def __init__(self):
-        self.name = "Movement_DOWN_LEFT"
+    name: str = "Movement_DOWN_LEFT"
 
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
         from agent_interfaces.HasMovement import HasMovement
@@ -93,8 +88,7 @@ class Movement_DOWN_LEFT(CombatAction):
 
 
 class Movement_DOWN_RIGHT(CombatAction):
-    def __init__(self):
-        self.name = "Movement_DOWN_RIGHT"
+    name: str = "Movement_DOWN_RIGHT"
 
     def is_available(self, agent, current_position: tuple[int, int], grid, n_squares_height, n_squares_width) -> bool:
         from agent_interfaces.HasMovement import HasMovement
