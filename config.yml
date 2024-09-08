@@ -1,0 +1,27 @@
+# Graphics
+RENDER:
+    mode: "human"
+    wait_timestep_ms: 0
+
+# Grid
+n_squares_width: 6
+n_squares_height: 5
+
+# Agents
+player:
+    max_hp: 50
+    movement_speed: 6
+    attack_damage: 5
+    attacks_max_number: 1
+    default_coordinates: "random"
+
+monster:
+    max_hp: 100
+    movement_speed: 3
+    attack_damage: 10
+    attacks_max_number: 1
+    default_coordinates: "random"
+
+
+# Training
+num_episodes : 100

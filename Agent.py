@@ -78,10 +78,10 @@ class Player(Agent, HasHP, HasEndTurn, HasMovement, HasAttack):
     def __init__(
         self,
         image_path: str,
-        max_hp: int = 50,
-        movement_speed: int = 6,
-        attack_damage: int = 5,
-        attacks_max_number: int = 1,
+        max_hp: int,
+        movement_speed: int,
+        attack_damage: int,
+        attacks_max_number: int,
     ):
         Agent.__init__(self, image_path)
 
@@ -105,10 +105,10 @@ class Monster(Agent, HasEndTurn, HasMovement, HasAttack):
     def __init__(
         self,
         image_path: str,
-        max_hp: int = 50,
-        movement_speed: int = 30,
-        attack_damage: int = 5,
-        attacks_max_number: int = 1,
+        max_hp: int,
+        movement_speed: int,
+        attack_damage: int,
+        attacks_max_number: int,
     ):
         Agent.__init__(self, image_path)
 

@@ -3,6 +3,7 @@ import pickle
 import random
 import pygame
 import numpy as np
+import yaml
 
 from Config import Config
 from combat_actions.Attack import Attack
@@ -166,18 +167,32 @@ def learn(state, action, reward, next_state):
 def main():
 
     # Load config file
-    with open("config.json") as file:
-        config = Config(json.loads(file.read()))
+    with open("config.yml", "r") as file:
+        config = Config(yaml.safe_load(file.read()))
 
-    env = DnDEnvironment(n_squares_width=6, n_squares_height=5, _RENDER_MODE="human")
+    env = DnDEnvironment(
+        n_squares_width=config.n_squares_width,
+        n_squares_height=config.n_squares_height,
+        _RENDER_MODE=config.RENDER.mode,
+    )
 
-    player = Player("pictures/Erik combat pose-token.png", max_hp=50)
-    monster = Monster("pictures/mimic2-token.png", max_hp=100, attack_damage=10, movement_speed=15)
+    player = Player(
+        "pictures/Erik combat pose-token.png",
+        config.player.max_hp,
+        config.player.movement_speed,
+        config.player.attack_damage,
+        config.player.attacks_max_number,
+    )
+    monster = Monster(
+        "pictures/mimic2-token.png",
+        config.monster.max_hp,
+        config.monster.movement_speed,
+        config.monster.attack_damage,
+        config.monster.attacks_max_number,
+    )
 
-    env.place_agent(player, "random")
-    env.place_agent(monster, "random")
-
-    print(f"\nGrid:\n{env.grid.transpose()}")
+    env.place_agent(player, config.player.default_coordinates)
+    env.place_agent(monster, config.monster.default_coordinates)
 
     statistics: list[EpisodeStatistics] = []
     for episode in range(config.num_episodes):

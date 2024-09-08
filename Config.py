@@ -1,6 +1,6 @@
 class Config:
-    def __init__(self, json_data):
-        for key, value in json_data.items():
+    def __init__(self, data):
+        for key, value in data.items():
             if isinstance(value, dict):
                 self.__dict__[key] = Config(value)
             else:
