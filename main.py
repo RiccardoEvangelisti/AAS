@@ -4,6 +4,7 @@ import random
 import pygame
 import numpy as np
 
+from Config import Config
 from combat_actions.Attack import Attack
 from combat_actions.CombatActions import CombatAction
 from agent_interfaces.HasMovement import HasMovement
@@ -11,6 +12,8 @@ from agent_interfaces.HasMovement import HasMovement
 from Agent import Agent, HasAttack, Monster, Player
 from DnDEnvironment import DnDEnvironment
 from Statistics import EpisodeStatistics
+
+import json
 
 
 class State:
@@ -161,6 +164,11 @@ def learn(state, action, reward, next_state):
 
 
 def main():
+
+    # Load config file
+    with open("config.json") as file:
+        config = Config(json.loads(file.read()))
+
     env = DnDEnvironment(n_squares_width=6, n_squares_height=5, _RENDER_MODE="human")
 
     player = Player("pictures/Erik combat pose-token.png", max_hp=50)
@@ -172,10 +180,12 @@ def main():
     print(f"\nGrid:\n{env.grid.transpose()}")
 
     statistics: list[EpisodeStatistics] = []
-    num_episodes = 100
-    for episode in range(num_episodes):
+    for episode in range(config.num_episodes):
+
+        if config.RENDER.mode == "human":
+            pygame.display.set_caption(f"Episode {episode + 1}")
+
         env.reset()
-        pygame.display.set_caption(f"Episode {episode + 1}")
 
         done = False
 
@@ -210,7 +220,8 @@ def main():
 
             print(f"\tReward: {reward}")
 
-            # pygame.time.wait(30)
+            if config.RENDER.mode == "human":
+                pygame.time.wait(config.RENDER.wait_timestep_ms)
 
         # Save value function to a file
         with open(ql_file, "wb") as f:

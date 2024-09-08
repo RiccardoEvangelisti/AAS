@@ -35,7 +35,7 @@ class Agent(HasHP):
     def default_coordinates(self, value: tuple[int, int] | str):
         self._default_coordinates = value
 
-    # combatActions: dictionnary of {CombatActions.name: CombatAction}
+    # combatActions: dict of {CombatActions.name: CombatAction}
     @property
     def combatActions(self) -> dict[str, CombatAction]:
         return self._combatActions
