@@ -2,56 +2,16 @@ import os
 import pickle
 import random
 import pygame
-import numpy as np
 import yaml
 
 from Config import Config
+from State import State
 from combat_actions.Attack import Attack
 from combat_actions.CombatActions import CombatAction
-from agent_interfaces.HasMovement import HasMovement
 
-from Agent import Agent, HasAttack, Monster, Player
+from Agent import Monster, Player
 from DnDEnvironment import DnDEnvironment
-from Statistics import EpisodeStatistics
-
-import json
-
-
-class State:
-    def update_agents_coord(self, agents: list[Agent]):
-        self.agents_coordinates = []
-        for agent in agents:
-            self.agents_coordinates.append(agent.coordinates[0])
-            self.agents_coordinates.append(agent.coordinates[1])
-
-    def update_current_hp(self, agent: Agent):
-        self.current_hp = agent.current_hp
-
-    def update_damage_dealt(self, enemy: Agent):
-        self.damage_dealt = enemy.max_hp - enemy.current_hp
-
-    def update_attack_available(self, agent: Agent):
-        if isinstance(agent, HasAttack):
-            self.attacks_remaining = agent._attacks_left
-        else:
-            self.attacks_remaining = 0
-
-    def update_movement_available(self, agent: Agent):
-        if isinstance(agent, HasMovement):
-            self.movement_remaining = agent.movement_left
-        else:
-            self.movement_remaining = 0
-
-    def to_array(self):
-        return np.hstack(
-            [
-                self.agents_coordinates,
-                self.current_hp,
-                self.damage_dealt,
-                self.attacks_remaining,
-                self.movement_remaining,
-            ]
-        )
+from Statistics import EpisodeStatistics, Statistics
 
 
 ##########################################
@@ -88,24 +48,13 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
         done = False
 
     # New State
-    playing_agent = env.get_playing_agent()
-    enemy_agent = env.get_not_playing_agents()[0]
-    new_state = State()
-    new_state.update_agents_coord([playing_agent, enemy_agent])
-    new_state.update_current_hp(playing_agent)
-    new_state.update_damage_dealt(enemy_agent)
-    new_state.update_attack_available(playing_agent)
-    new_state.update_movement_available(playing_agent)
+    new_state = state = State(env.get_playing_agent(), env.get_not_playing_agents()[0])
     print(f"\tNew State: {new_state.to_array()}")
 
     return new_state, reward, done
 
 
 ######################################
-
-EPSILON = 0.2  # Exploration rate
-ALPHA = 0.1  # Learning rate
-GAMMA = 0.9  # Discount factor
 
 
 # Load value function from a file
@@ -122,11 +71,11 @@ else:
 # epsilon-greedy policy
 def chooseAction(state, available_actions: list[CombatAction]):
     # Explore
-    if random.random() < EPSILON:
+    if random.random() < config.Q_learning.EPSILON:
         return random.choice(available_actions)
 
     # Exploit
-    state_bytes = state.to_array().tobytes()
+    state_bytes = state.to_bytes()
 
     # Take action-value pairs that match the current state and in available actions
     q_filtered = {
@@ -148,16 +97,16 @@ def chooseAction(state, available_actions: list[CombatAction]):
 
 
 def learn(state, action, reward, next_state):
-    q_value_current = q_dict.get((state.to_array().tobytes(), action), 0)
+    q_value_current = q_dict.get((state.to_bytes(), action), 0)
     # Take the state-action pairs that match the next_state
-    q_filtered = dict(filter(lambda item: item[0][0] == next_state.to_array().tobytes(), q_dict.items()))
+    q_filtered = dict(filter(lambda item: item[0][0] == next_state.to_bytes(), q_dict.items()))
 
     # Get the highest q-value for the next_state
     max_q_value_next = max(q_filtered.values()) if q_filtered else 0
 
     # Update the Q-value for the current state-action pair
-    q_dict[(state.to_array().tobytes(), action.name)] = q_value_current + ALPHA * (
-        reward + GAMMA * max_q_value_next - q_value_current
+    q_dict[(state.to_bytes(), action.name)] = q_value_current + config.Q_learning.ALPHA * (
+        reward + config.Q_learning.GAMMA * max_q_value_next - q_value_current
     )
 
 
@@ -168,54 +117,53 @@ def main():
 
     # Load config file
     with open("config.yml", "r") as file:
+        global config
         config = Config(yaml.safe_load(file.read()))
 
+    # Create the environment
     env = DnDEnvironment(
         n_squares_width=config.n_squares_width,
         n_squares_height=config.n_squares_height,
         _RENDER_MODE=config.RENDER.mode,
     )
 
+    # Create the agents
     player = Player(
-        "pictures/Erik combat pose-token.png",
+        config.player.picture_path,
         config.player.max_hp,
         config.player.movement_speed,
         config.player.attack_damage,
         config.player.attacks_max_number,
     )
     monster = Monster(
-        "pictures/mimic2-token.png",
+        config.monster.picture_path,
         config.monster.max_hp,
         config.monster.movement_speed,
         config.monster.attack_damage,
         config.monster.attacks_max_number,
     )
 
+    # Place agents into the environment
     env.place_agent(player, config.player.default_coordinates)
     env.place_agent(monster, config.monster.default_coordinates)
 
-    statistics: list[EpisodeStatistics] = []
-    for episode in range(config.num_episodes):
+    # Initialize statistics
+    stat = Statistics()
 
+    # Episodes loop
+    for episode in range(config.num_episodes):
+        # Statistics and render
+        total_reward = 0
         if config.RENDER.mode == "human":
             pygame.display.set_caption(f"Episode {episode + 1}")
 
+        # Environment reset
         env.reset()
 
-        done = False
+        done = False  # If the episode is concluded
 
-        total_reward = 0
-
-        # Get the current state
-        state = State()
-        playing_agent = env.get_playing_agent()
-        enemy_agent = env.get_not_playing_agents()[0]
-        state.update_agents_coord([playing_agent, enemy_agent])
-        state.update_current_hp(playing_agent)
-        state.update_damage_dealt(env.get_not_playing_agents()[0])
-        state.update_attack_available(playing_agent)
-        state.update_movement_available(playing_agent)
-        print(f"Initial State: {state.to_array()}")
+        # Initialize the current state
+        state = State(env.get_playing_agent(), env.get_not_playing_agents()[0])
 
         while not done:
             # Choose an action based on the current state
@@ -244,7 +192,7 @@ def main():
 
         print(f"Episode {episode + 1}: Total Reward = {total_reward}")
         print(f"Won {env.get_playing_agent().id} with {env.get_playing_agent().current_hp} HP left")
-        statistics.append(
+        stat.episode_statistics.append(
             EpisodeStatistics(
                 episode + 1,
                 env.get_playing_agent().id,
@@ -254,7 +202,7 @@ def main():
         )
 
     print("\n\n\nStatistics")
-    for stat in statistics:
+    for stat in stat.episode_statistics:
         print(
             f"Episode: {stat.episode_number}, Winner: {stat.winner}, HP_enemy: {stat.enemy_hp_remaining}, Total Reward: {stat.total_reward}"
         )

@@ -13,6 +13,7 @@ player:
     movement_speed: 6
     attack_damage: 5
     attacks_max_number: 1
+    picture_path: "pictures/Erik combat pose-token.png"
     default_coordinates: "random"
 
 monster:
@@ -20,8 +21,16 @@ monster:
     movement_speed: 3
     attack_damage: 10
     attacks_max_number: 1
+    picture_path: "pictures/mimic2-token.png"
     default_coordinates: "random"
 
 
 # Training
 num_episodes : 100
+
+
+# Q_learning parameters
+Q_learning:
+    EPSILON : 0.2  # Exploration rate
+    ALPHA : 0.1  # Learning rate
+    GAMMA : 0.9  # Discount factor
