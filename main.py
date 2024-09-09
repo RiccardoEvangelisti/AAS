@@ -173,12 +173,12 @@ def main():
         stat_saver.add_episode(statistics)
 
         # Save value function and statistics
-        if (episode + 1) % 100 == 0:
+        if (episode + 1) % 1000 == 0:
             algorithm.save_value_function(config.algorithm.pickle_filename)
             stat_saver.save_statistics()
 
     # Save in case of not saved in the loop
-    if config.num_episodes % 100 != 0:
+    if config.num_episodes % 1000 != 0:
         algorithm.save_value_function(config.algorithm.pickle_filename)
         stat_saver.save_statistics()
 
