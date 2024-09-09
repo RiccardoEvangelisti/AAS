@@ -14,8 +14,8 @@ class Q_Learning(Algorithm):
         return self.__q_dict
 
     @q_dict.setter
-    def q_dict(self, value: dict[tuple[bytes, str], float]):
-        """Dictionary to store Q-values: {(state.to_bytes(), action.name): q_value}"""
+    def q_dict(self, value: dict[bytes, dict[str, float]]):
+        """Dictionary to store Q-values: {state.to_bytes(): {action.name: q_value}}"""
         self.__q_dict = value
 
     # Constructor
@@ -34,38 +34,47 @@ class Q_Learning(Algorithm):
     ##############################################
     def exploit_best_action(self, state: State, available_actions: list[CombatAction]) -> CombatAction:
 
-        # Take action-value pairs that match the current state and in available actions
-        q_filtered = {
-            _action_str: _value
-            for (_state, _action_str), _value in self.q_dict.items()
-            if _state == state.to_bytes() and any(action.name == _action_str for action in available_actions)
+        # Take action-value pairs that match the current state
+        action_values = self.q_dict.get(state.to_bytes(), {})
+
+        # Filter to keep only actions that are available
+        action_values = {
+            action.name: action_values[action.name] for action in available_actions if action.name in action_values
         }
 
         # If there are no matching state-action pairs, return a random action
-        if not q_filtered:
+        if not action_values:
             return random.choice(available_actions)
 
         # Get the highest q-value
-        max_q_value = max(q_filtered.values())
+        max_q_value = max(action_values.values())
         # Get actions with the highest q-value
-        best_actions = [action for action in available_actions if q_filtered.get(action.name) == max_q_value]
+        best_actions = [action for action in available_actions if action_values.get(action.name) == max_q_value]
         # Return a random action from the list of actions with the highest q-value
         return random.choice(best_actions)
 
     ##############################################
     def learn(self, state, action, reward, next_state):
-        # Get current value of Q(s, a) (if not exist, default to 0)
-        q_value_current = self.q_dict.get((state.to_bytes(), action), 0)
 
-        # Take the state-action pairs that match the next_state
-        q_filtered = {(state, _): value for (state, _), value in self.q_dict.items() if state == next_state.to_bytes()}
+        # Get the dictionary of q-values for the current state
+        state_q_values = self.q_dict.get(state.to_bytes(), {})
+
+        # Get current value of Q(s, a) (if not exist, default to 0)
+        q_value_current = state_q_values.get(action.name, 0)
+
+        # Get q-values for the next state
+        next_state_q_values = self.q_dict.get(next_state.to_bytes(), {})
+
         # Get the highest q-value for the next_state (if not exist, default to 0)
-        max_q_value_next = max(q_filtered.values()) if q_filtered else 0
+        max_q_value_next = max(next_state_q_values.values(), default=0)
 
         # Update the Q-value for the current state-action pair
-        self.q_dict[(state.to_bytes(), action.name)] = q_value_current + self.ALPHA * (
+        state_q_values[action.name] = q_value_current + self.ALPHA * (
             reward + self.GAMMA * max_q_value_next - q_value_current
         )
+
+        # Save the updated state-action q-values back to the q_dict
+        self.q_dict[state.to_bytes()] = state_q_values
 
     ##############################################
     def save_value_function(self, pickle_filename):
