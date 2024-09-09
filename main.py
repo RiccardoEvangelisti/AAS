@@ -12,7 +12,7 @@ from combat_actions.CombatActions import CombatAction
 
 from Agent import Monster, Player
 from DnDEnvironment import DnDEnvironment
-from Statistics import EpisodeStatistics, Statistics
+from Statistics import Statistics
 
 
 ##########################################
@@ -103,9 +103,6 @@ def main():
     env.place_agent(player, config.player.default_coordinates)
     env.place_agent(monster, config.monster.default_coordinates)
 
-    # Initialize statistics
-    stat = Statistics(config.statistics.pickle_filename)
-
     # Take algorithm from config
     if config.algorithm.name == config.Q_Learning.name:
         algorithm: Algorithm = Q_Learning(config.Q_Learning)
@@ -114,7 +111,7 @@ def main():
     # Episodes loop
     for episode in range(config.num_episodes):
         # Statistics and render
-        episode_stat = EpisodeStatistics(episode + 1, [player.name, monster.name])
+        statistics = Statistics([player.name, monster.name], config.statistics.pickle_filename)
         if config.RENDER.mode == "human":
             pygame.display.set_caption(f"Episode {episode + 1}")
 
@@ -162,8 +159,8 @@ def main():
             state = next_state
 
             # Statistics and render
-            episode_stat.actions_taken[env.get_playing_agent().name].append(action.name)
-            episode_stat.total_reward += reward
+            statistics.actions_taken[env.get_playing_agent().name].append(action.name)
+            statistics.total_reward += reward
             if config.RENDER.mode == "human":
                 pygame.time.wait(config.RENDER.wait_timestep_ms)
 
@@ -171,13 +168,12 @@ def main():
         algorithm.save_value_function(config.algorithm.pickle_filename)
 
         # Statistics
-        episode_stat.winner_name = env.get_playing_agent().name
-        episode_stat.winner_hp_remaining = env.get_playing_agent().current_hp
-        stat.episode_stat_list.append(episode_stat)
+        statistics.winner_name = env.get_playing_agent().name
+        statistics.winner_hp_remaining = env.get_playing_agent().current_hp
+        statistics.save_statistics(config.statistics.pickle_filename)
 
-    # Statistics and render
-    stat.save_statistics(config.statistics.pickle_filename)
-    pygame.quit()
+    if config.RENDER.mode == "human":
+        pygame.quit()
 
 
 if __name__ == "__main__":
