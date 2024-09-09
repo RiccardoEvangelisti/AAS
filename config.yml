@@ -1,6 +1,6 @@
 # Graphics
 RENDER:
-    mode: "human"
+    mode: #"human"
     wait_timestep_ms: 0
 
 # Grid
@@ -41,7 +41,7 @@ DQN: &DQN
     name: "DQN"
     minibatch_size: 32 # Number of experiences to sample from memory
     replay_buffer_size: 10000
-    target_update_freq: 10000
+    target_update_freq: 100
     EPSILON: 0.03 # Exploration rate
     EPSILON_rateDecay: 1 # Exploration rate decay
     ALPHA: 0.7 # Learning rate

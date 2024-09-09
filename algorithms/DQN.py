@@ -7,7 +7,7 @@ from combat_actions.CombatActions import CombatAction
 
 import numpy as np
 import keras
-from keras import layers, models
+from keras import layers, models, losses
 from keras.src import optimizers
 from collections import deque
 import random
@@ -50,11 +50,11 @@ class DQN(Algorithm):
         model = models.Sequential(
             [
                 layers.Input(shape=(self.num_states,)),
-                layers.Dense(16, activation="relu"),
+                layers.Dense(24, activation="relu"),
                 layers.Dense(self.num_actions),
             ]
         )
-        model.compile(optimizer=optimizers.Adam(learning_rate=self.learning_rate))  # type: ignore
+        model.compile(optimizer=optimizers.Adam(learning_rate=self.learning_rate), loss=losses.MeanSquaredError())  # type: ignore
         return model
 
     ##############################################
