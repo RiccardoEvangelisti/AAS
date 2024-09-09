@@ -264,3 +264,9 @@ class DnDEnvironment:
         pygame.draw.rect(screen, "black", (x, y, SQUARE_SIZE, health_bar_height), 1)  # black border
         # Update the full display Surface to the screen
         pygame.display.flip()
+
+    def get_all_actions(self) -> list[str]:
+        actions: list[str] = []
+        for agent in self.agents:
+            actions.extend(agent.combatActions.keys())
+        return np.unique(actions).tolist()

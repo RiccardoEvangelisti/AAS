@@ -1,11 +1,17 @@
 import pygame
 import yaml
 
+import logging, os
+
+logging.disable(logging.WARNING)  # disable TF logging
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
 from ActionSelection import ActionSelection
 from Config import Config
 from State import State
 from agent_interfaces.HasAttack import HasAttack
 from algorithms.Algorithm import Algorithm
+from algorithms.DQN import DQN
 from algorithms.Q_Learning import Q_Learning
 from combat_actions.Attack import Attack
 from combat_actions.CombatActions import CombatAction
@@ -106,6 +112,10 @@ def main():
     # Take algorithm from config
     if config.algorithm.name == config.Q_Learning.name:
         algorithm: Algorithm = Q_Learning(config.Q_Learning)
+    elif config.algorithm.name == config.DQN.name:
+        all_actions = env.get_all_actions()
+        state = State(env.get_playing_agent(), env.get_not_playing_agents()[0])
+        algorithm: Algorithm = DQN(config.DQN, all_actions, len(state.to_array()))
 
     # Statistics
     stat_saver = StatSaver(config.algorithm.statistics_filename)
@@ -158,7 +168,7 @@ def main():
             next_state, reward, done = step(action, available_actions, state, env)
 
             # Learning phase
-            algorithm.learn(state, action, reward, next_state)
+            algorithm.learn(state, action, reward, next_state, done)
 
             # Change state
             state = next_state
@@ -175,12 +185,12 @@ def main():
         stat_saver.add_episode(statistics)
 
         # Save value function and statistics
-        if (episode + 1) % 10000 == 0:
+        if (episode + 1) % config.saving_freq == 0:
             algorithm.save_value_function(config.algorithm.pickle_filename)
             stat_saver.save_statistics()
 
     # Save in case of not saved in the loop
-    if config.num_episodes % 10000 != 0:
+    if config.num_episodes % config.saving_freq != 0:
         algorithm.save_value_function(config.algorithm.pickle_filename)
         stat_saver.save_statistics()
 
