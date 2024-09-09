@@ -12,7 +12,7 @@ from combat_actions.CombatActions import CombatAction
 
 from Agent import Monster, Player
 from DnDEnvironment import DnDEnvironment
-from Statistics import Statistics
+from Statistics import EpisodeStats, StatSaver
 
 
 ##########################################
@@ -107,11 +107,14 @@ def main():
     if config.algorithm.name == config.Q_Learning.name:
         algorithm: Algorithm = Q_Learning(config.Q_Learning)
 
+    # Statistics
+    stat_saver = StatSaver(config.algorithm.statistics_filename)
+
     ########################################################################
     # Episodes loop
     for episode in range(config.num_episodes):
         # Statistics and render
-        statistics = Statistics([player.name, monster.name], config.algorithm.statistics_filename)
+        statistics = EpisodeStats([player.name, monster.name], stat_saver.get_episode_number())
         if config.RENDER.mode == "human":
             pygame.display.set_caption(f"Episode {episode + 1}")
 
@@ -164,13 +167,20 @@ def main():
             if config.RENDER.mode == "human":
                 pygame.time.wait(config.RENDER.wait_timestep_ms)
 
-        # Save value function to a file
-        algorithm.save_value_function(config.algorithm.pickle_filename)
-
         # Statistics
         statistics.winner_name = env.get_playing_agent().name
         statistics.winner_hp_remaining = env.get_playing_agent().current_hp
-        statistics.save_statistics(config.algorithm.statistics_filename)
+        stat_saver.add_episode(statistics)
+
+        # Save value function and statistics
+        if (episode + 1) % 100 == 0:
+            algorithm.save_value_function(config.algorithm.pickle_filename)
+            stat_saver.save_statistics()
+
+    # Save in case of not saved in the loop
+    if config.num_episodes % 100 != 0:
+        algorithm.save_value_function(config.algorithm.pickle_filename)
+        stat_saver.save_statistics()
 
     if config.RENDER.mode == "human":
         pygame.quit()
