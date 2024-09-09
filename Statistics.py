@@ -1,5 +1,6 @@
 import os
 import pickle
+import gzip
 
 import numpy as np
 
@@ -10,7 +11,7 @@ class StatSaver:
 
         # Load value-function from file, if it exists
         if os.path.exists(pickle_filename):
-            with open(pickle_filename, "rb") as f:
+            with gzip.open(pickle_filename, "rb") as f:
                 self.__last_episode_number = len(pickle.load(f)) - 1
         else:
             self.__last_episode_number = -1
@@ -41,12 +42,12 @@ class StatSaver:
                 )
 
         if os.path.exists(self.pickle_filename):
-            with open(self.pickle_filename, "rb") as f:
+            with gzip.open(self.pickle_filename, "rb") as f:
                 old_dictionary = pickle.load(f)
                 old_dictionary.update(dictionary)
                 dictionary = old_dictionary
 
-        with open(self.pickle_filename, "wb") as f:
+        with gzip.open(self.pickle_filename, "wb") as f:
             pickle.dump(dictionary, f)
 
         # Clear the list

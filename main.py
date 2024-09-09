@@ -1,7 +1,7 @@
 import pygame
 import yaml
 
-import ActionSelection
+from ActionSelection import ActionSelection
 from Config import Config
 from State import State
 from agent_interfaces.HasAttack import HasAttack
@@ -110,6 +110,9 @@ def main():
     # Statistics
     stat_saver = StatSaver(config.algorithm.statistics_filename)
 
+    # Action Selection
+    action_selection = ActionSelection(config.algorithm.EPSILON, config.algorithm.EPSILON_rateDecay)
+
     ########################################################################
     # Episodes loop
     for episode in range(config.num_episodes):
@@ -145,10 +148,9 @@ def main():
                 env.grid, env.n_squares_height, env.n_squares_width
             )
             # Choose action
-            action = ActionSelection.epsilon_greedy(
+            action = action_selection.epsilon_greedy(
                 state,
                 available_actions,
-                config.algorithm.EPSILON,
                 algorithm,
             )
 
@@ -173,12 +175,12 @@ def main():
         stat_saver.add_episode(statistics)
 
         # Save value function and statistics
-        if (episode + 1) % 1000 == 0:
+        if (episode + 1) % 10000 == 0:
             algorithm.save_value_function(config.algorithm.pickle_filename)
             stat_saver.save_statistics()
 
     # Save in case of not saved in the loop
-    if config.num_episodes % 1000 != 0:
+    if config.num_episodes % 10000 != 0:
         algorithm.save_value_function(config.algorithm.pickle_filename)
         stat_saver.save_statistics()
 

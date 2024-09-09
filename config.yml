@@ -29,11 +29,12 @@ monster:
 # Q_learning parameters
 Q_Learning: &Q_Learning
     name: "Q_Learning"
-    EPSILON: 0.1 # Exploration rate
+    EPSILON: 0.03 # Exploration rate
+    EPSILON_rateDecay: 1 # Exploration rate decay
     ALPHA: 0.5 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/q_learning_values.pkl"
-    statistics_filename: "statistics/q_learning_statistics.pkl"
+    statistics_filename: "statistics/q_learning_statistics.pkl.gz"
 
 # Training
 num_episodes: 100000
