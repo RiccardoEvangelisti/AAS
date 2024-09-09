@@ -127,7 +127,7 @@ def main():
         # Steps loop
         while not done:
             print(
-                f"Episode {episode+1} progess: %",
+                f"Episode {episode+1}/{config.num_episodes} progess: %",
                 (
                     max(
                         100 - (100 * env.get_playing_agent().current_hp / env.get_playing_agent().max_hp),
