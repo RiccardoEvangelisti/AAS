@@ -111,7 +111,7 @@ def main():
     # Episodes loop
     for episode in range(config.num_episodes):
         # Statistics and render
-        statistics = Statistics([player.name, monster.name], config.statistics.pickle_filename)
+        statistics = Statistics([player.name, monster.name], config.algorithm.statistics_filename)
         if config.RENDER.mode == "human":
             pygame.display.set_caption(f"Episode {episode + 1}")
 
@@ -170,7 +170,7 @@ def main():
         # Statistics
         statistics.winner_name = env.get_playing_agent().name
         statistics.winner_hp_remaining = env.get_playing_agent().current_hp
-        statistics.save_statistics(config.statistics.pickle_filename)
+        statistics.save_statistics(config.algorithm.statistics_filename)
 
     if config.RENDER.mode == "human":
         pygame.quit()

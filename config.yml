@@ -1,6 +1,6 @@
 # Graphics
 RENDER:
-    mode: #"human"
+    mode: "human"
     wait_timestep_ms: 0
 
 # Grid
@@ -29,15 +29,12 @@ monster:
 # Q_learning parameters
 Q_Learning: &Q_Learning
     name: "Q_Learning"
-    EPSILON: 0.2 # Exploration rate
-    ALPHA: 0.1 # Learning rate
+    EPSILON: 0.1 # Exploration rate
+    ALPHA: 0.5 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/q_learning_values.pkl"
+    statistics_filename: "statistics/q_learning_statistics.pkl"
 
 # Training
-num_episodes: 10
+num_episodes: 2000
 algorithm: *Q_Learning # NEEDS to be an alias of the algorithm (the "*")
-
-# Statistics
-statistics:
-    pickle_filename: "statistics/q_learning_statistics.pkl"
