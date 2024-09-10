@@ -39,7 +39,7 @@ Q_Learning: &Q_Learning
 # DQN parameters
 DQN: &DQN
     name: "DQN"
-    minibatch_size: 32 # Number of experiences to sample from memory
+    minibatch_size: 64 # Number of experiences to sample from memory
     replay_buffer_size: 10000
     target_update_freq: 1000
     EPSILON: 0.05 # Exploration rate

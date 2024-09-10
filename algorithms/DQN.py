@@ -51,7 +51,8 @@ class DQN(Algorithm):
         model = models.Sequential(
             [
                 layers.Input(shape=(self.num_states,)),
-                layers.Dense(64, activation="relu"),
+                layers.Dense(256, activation="relu"),
+                layers.Dense(256, activation="relu"),
                 layers.Dense(self.num_actions),
             ]
         )
