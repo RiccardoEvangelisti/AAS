@@ -1,7 +1,7 @@
 # Graphics
 RENDER:
     mode: #"human"
-    wait_timestep_ms: 0
+    wait_timestep_ms: 100
 
 # Grid
 n_squares_width: 6
@@ -29,9 +29,9 @@ monster:
 # Q_learning parameters
 Q_Learning: &Q_Learning
     name: "Q_Learning"
-    EPSILON: 0.03 # Exploration rate
+    EPSILON: 0.01
     EPSILON_rateDecay: 1 # Exploration rate decay
-    ALPHA: 0.5 # Learning rate
+    ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/q_learning_values.pkl"
     statistics_filename: "statistics/q_learning_statistics.pkl.gz"
@@ -51,5 +51,5 @@ DQN: &DQN
 
 # Training
 num_episodes: 100000
-algorithm: *DQN # NEEDS to be an alias of the algorithm (the "*")
-saving_freq: 10
+algorithm: *Q_Learning # NEEDS to be an alias of the algorithm (the "*")
+saving_freq: 10000
