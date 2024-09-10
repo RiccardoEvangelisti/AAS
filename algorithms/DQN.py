@@ -134,8 +134,9 @@ class DQN(Algorithm):
 
         # Update the target-Q-network
         self.step_counter += 1
-        if self.step_counter % self.target_update_freq == 0:
+        if self.step_counter == self.target_update_freq:
             self.target_q_network.set_weights(self.q_network.get_weights())
+            self.step_counter = 0
 
     ##############################################
     def save_value_function(self, pickle_filename):

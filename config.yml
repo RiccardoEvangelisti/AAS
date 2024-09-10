@@ -39,13 +39,13 @@ Q_Learning: &Q_Learning
 # DQN parameters
 DQN: &DQN
     name: "DQN"
-    minibatch_size: 32 # Number of experiences to sample from memory
+    minibatch_size: 16 # Number of experiences to sample from memory
     replay_buffer_size: 10000
-    target_update_freq: 100
-    EPSILON: 0.03 # Exploration rate
+    target_update_freq: 10000
+    EPSILON: 0.1 # Exploration rate
     EPSILON_rateDecay: 1 # Exploration rate decay
-    ALPHA: 0.7 # Learning rate
-    GAMMA: 0.7 # Discount factor
+    ALPHA: 0.1 # Learning rate
+    GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/dqn_values.pkl"
     statistics_filename: "statistics/dqn_statistics.pkl.gz"
 
