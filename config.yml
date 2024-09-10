@@ -9,7 +9,7 @@ n_squares_height: 5
 
 # Agents
 player:
-    max_hp: 50
+    max_hp: 80
     movement_speed: 6
     attack_damage: 5
     attacks_max_number: 1
@@ -32,7 +32,7 @@ Q_Learning: &Q_Learning
     EPSILON: 0.01
     EPSILON_rateDecay: 1 # Exploration rate decay
     ALPHA: 0.1 # Learning rate
-    GAMMA: 0.9 # Discount factor
+    GAMMA: 0.7 # Discount factor
     pickle_filename: "outputs/q_learning_values.pkl"
     statistics_filename: "statistics/q_learning_statistics.pkl.gz"
 
