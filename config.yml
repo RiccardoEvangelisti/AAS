@@ -41,8 +41,8 @@ DQN: &DQN
     name: "DQN"
     minibatch_size: 16 # Number of experiences to sample from memory
     replay_buffer_size: 10000
-    target_update_freq: 10000
-    EPSILON: 0.1 # Exploration rate
+    target_update_freq: 100
+    EPSILON: 0.05 # Exploration rate
     EPSILON_rateDecay: 1 # Exploration rate decay
     ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
