@@ -10,6 +10,7 @@ from ActionSelection import ActionSelection
 from Config import Config
 from State import State
 from agent_interfaces.HasAttack import HasAttack
+from agent_interfaces.HasMovement import HasMovement
 from algorithms.Algorithm import Algorithm
 from algorithms.DQN import DQN
 from algorithms.Q_Learning import Q_Learning
@@ -26,9 +27,17 @@ from Statistics import EpisodeStats, StatSaver
 
 def step(action: CombatAction, available_actions, state: State, env: DnDEnvironment):
     OLD_playing_agent = env.get_playing_agent()
+    OLD_playing_agent_coord = OLD_playing_agent.coordinates
+    OLD_playing_agent_movement_left = (
+        OLD_playing_agent.movement_left if isinstance(OLD_playing_agent, HasMovement) else 0
+    )
+    OLD_playing_agent_is_attack_available = (
+        OLD_playing_agent.is_attack_available() > 0 if isinstance(OLD_playing_agent, HasAttack) else False
+    )
 
     OLD_enemy_agent = env.get_not_playing_agents()[0]
     OLD_enemy_agent_HP = OLD_enemy_agent.current_hp
+    OLD_enemy_agent_coord = OLD_enemy_agent.coordinates
 
     # Take Action
     env.takeAction(action)
@@ -37,36 +46,61 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
     new_state = State(env.get_playing_agent(), env.get_not_playing_agents()[0])
 
     # !!!
-    # FOR THE ENVIRONMENT AND THE AGENTS, FROM NOW WE ARE IN THE NEXT STATE
+    # FOR THE ENVIRONMENT AND THE AGENTS, FROM NOW ON WE ARE IN THE NEXT STATE
     # !!!
 
-    # Reward
+    # Rewards:
+
+    #######################
     # Check if the enemy (of the old state) is dead (now in the new state)
     if not OLD_enemy_agent.is_alive():
         reward = 10
         done = True
+        return new_state, reward, done
 
+    #######################
     # Check if the enemy (of the old state) had more hp that now (now in the new state), i.e. it took damage
-    elif OLD_enemy_agent_HP > OLD_enemy_agent.current_hp:
+    if OLD_enemy_agent_HP > OLD_enemy_agent.current_hp:
         reward = 3
         done = False
+        return new_state, reward, done
 
+    #######################
     # Check if the agent took the EndTurn action but still he could made an attack (number of attaks left > 0 AND if it had an Attack action available)
-    elif (
+    if (
         action.name == "EndTurn"  # if took EndTurn action
-        and (
-            OLD_playing_agent.is_attack_available() > 0 if isinstance(OLD_playing_agent, HasAttack) else False
-        )  # if it had attacks left
+        and OLD_playing_agent_is_attack_available  # if it had attacks left
         and any(isinstance(a, Attack) for a in available_actions)  # if it had an Attack action available
     ):
         reward = -5
         done = False
+        return new_state, reward, done
 
-    # Otherwise
-    else:
-        reward = 0
+    #######################
+    # Check if the agent took the EndTurn action but still has movement to go in range for an attack
+    max_range = 0
+    # Take the maximum range of the all attacks that the agent is capable of
+    for _a in OLD_playing_agent.combatActions.values():
+        if isinstance(_a, Attack):
+            if _a.attack_range > max_range:
+                max_range = _a.attack_range
+    chebyshev_distance = max(
+        abs(OLD_playing_agent_coord[0] - OLD_enemy_agent_coord[0]),
+        abs(OLD_playing_agent_coord[1] - OLD_enemy_agent_coord[1]),
+    )
+    if (
+        action.name == "EndTurn"  # if took EndTurn action
+        and OLD_playing_agent_is_attack_available  # if it had attacks left
+        and chebyshev_distance - max_range <= OLD_playing_agent_movement_left
+    ):
+        reward = -3
         done = False
+        return new_state, reward, done
 
+    #######################
+    # Otherwise
+    reward = 0
+    done = False
     return new_state, reward, done
 
 
