@@ -26,7 +26,9 @@ from Statistics import EpisodeStats, StatSaver
 
 def step(action: CombatAction, available_actions, state: State, env: DnDEnvironment):
     OLD_playing_agent = env.get_playing_agent()
+
     OLD_enemy_agent = env.get_not_playing_agents()[0]
+    OLD_enemy_agent_HP = OLD_enemy_agent.current_hp
 
     # Take Action
     env.takeAction(action)
@@ -40,12 +42,12 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
 
     # Reward
     # Check if the enemy (of the old state) is dead (now in the new state)
-    if not env.get_agent_byID(OLD_enemy_agent.id).is_alive():
+    if not OLD_enemy_agent.is_alive():
         reward = 10
         done = True
 
     # Check if the enemy (of the old state) had more hp that now (now in the new state), i.e. it took damage
-    elif OLD_enemy_agent.current_hp > env.get_agent_byID(OLD_enemy_agent.id).current_hp:
+    elif OLD_enemy_agent_HP > OLD_enemy_agent.current_hp:
         reward = 3
         done = False
 
