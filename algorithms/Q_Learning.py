@@ -54,7 +54,7 @@ class Q_Learning(Algorithm):
         return random.choice(best_actions)
 
     ##############################################
-    def learn(self, state, action, reward, next_state, done):
+    def learn(self, state, action, reward, next_state, done, **kwargs):
 
         # Get the dictionary of q-values for the current state
         state_q_values = self.q_dict.get(state.to_bytes(), {})

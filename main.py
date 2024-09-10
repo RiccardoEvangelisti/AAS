@@ -168,7 +168,7 @@ def main():
             next_state, reward, done = step(action, available_actions, state, env)
 
             # Learning phase
-            algorithm.learn(state, action, reward, next_state, done)
+            algorithm.learn(state, action, reward, next_state, done, env=env)
 
             # Change state
             state = next_state

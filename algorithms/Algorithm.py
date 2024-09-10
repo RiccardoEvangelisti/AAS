@@ -11,7 +11,7 @@ class Algorithm(ABC):
         pass
 
     @abstractmethod
-    def learn(self, state, action, reward, next_state, done):
+    def learn(self, state, action, reward, next_state, done, **kwargs):
         pass
 
     @abstractmethod

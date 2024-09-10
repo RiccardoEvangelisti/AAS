@@ -1,6 +1,7 @@
 import os
 import pickle
 import tensorflow
+from DnDEnvironment import DnDEnvironment
 from State import State
 from algorithms.Algorithm import Algorithm
 from combat_actions.CombatActions import CombatAction
@@ -82,9 +83,22 @@ class DQN(Algorithm):
         return random.choice(best_actions)
 
     ##############################################
-    def learn(self, state, action, reward, next_state, done):
+    def learn(self, state, action, reward, next_state, done, **kwargs):
+
+        # Get the available actions for the "next state" which is now the current (because we already took the step)
+        env: DnDEnvironment = kwargs.get("env")  # type: ignore
+        available_actions = env.get_playing_agent().available_actions(
+            env.grid, env.n_squares_height, env.n_squares_width
+        )
+        # Take only the action indexes of the available actions
+        valid_actions = []  # actionIndex
+        for av_action in available_actions:
+            valid_actions.append(self.all_actions[av_action.name])
+
+        ####
+
         # Add the experience to the replay buffer
-        self.replay_buffer.append((state.to_array(), action, reward, next_state.to_array(), done))
+        self.replay_buffer.append((state.to_array(), action, reward, next_state.to_array(), done, valid_actions))
 
         # Update the Q-network using a minibatch of experiences
 
@@ -95,7 +109,7 @@ class DQN(Algorithm):
         # Sample the minibatch from the replay buffer
         minibatch = random.sample(self.replay_buffer, self.minibatch_size)
 
-        states, actions, rewards, next_states, dones = zip(*minibatch)
+        states, actions, rewards, next_states, dones, valid_actions_batch = zip(*minibatch)
         states = np.array(states)
         actions = np.array([self.all_actions[action.name] for action in actions])
         rewards = np.array(rewards)
@@ -105,8 +119,10 @@ class DQN(Algorithm):
         # Get q-values for all actions in all the next_states, from the target-Q-network
         q_values_next: np.ndarray = self.target_q_network.predict(next_states, verbose=0)  # type: ignore
 
-        # Max Q-values for each of the next states
-        max_q_values_next = np.array([np.max(q_values_next[i]) for i in range(self.minibatch_size)])
+        # Max Q-value for each of the next states, filtering in only the valid actions for each state
+        max_q_values_next = np.array(
+            [np.max(q_values_next[i][valid_actions_batch[i]]) for i in range(self.minibatch_size)]
+        )
 
         # Get the target Q-values (the updated Q-value)
         targets = np.zeros(self.minibatch_size)
