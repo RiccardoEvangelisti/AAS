@@ -6,6 +6,7 @@ import numpy as np
 from Agent import *
 from combat_actions.Attack import MeleeAttack, RangedAttack
 from combat_actions.Movement import *
+from combat_actions.EndTurn import EndTurn
 
 SQUARE_SIZE = 100
 
@@ -66,7 +67,7 @@ class DnDEnvironment:
             target_agent.took_damage(action.attack_damage)
             playing_agent.attacked()
 
-        if action.name == "EndTurn":
+        if action.name == EndTurn.name:
             self.change_turn()
 
         if action.name == Movement_UP.name and isinstance(playing_agent, HasMovement):

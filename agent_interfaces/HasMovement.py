@@ -16,11 +16,11 @@ class HasMovement:
     # movement_left
     @property
     def movement_left(self) -> int:
-        return self._movement_left
+        return self.__movement_left
 
     @movement_left.setter
     def movement_left(self, value: int):
-        self._movement_left = value
+        self.__movement_left = value
 
     # Constructor
     def __init__(self, movement_speed: int):
