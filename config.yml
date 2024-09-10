@@ -1,6 +1,6 @@
 # Graphics
 RENDER:
-    mode: #"human"
+    mode: "human"
     wait_timestep_ms: 0
 
 # Grid
