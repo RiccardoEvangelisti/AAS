@@ -7,6 +7,7 @@ from algorithms.Algorithm import Algorithm
 from combat_actions.CombatActions import CombatAction
 
 import numpy as np
+import tensorflow as tf
 import keras
 from keras import layers, models, losses
 from keras.src import optimizers
@@ -48,7 +49,7 @@ class DQN(Algorithm):
 
     ##############################################
     def create_q_network(self):
-        model = models.Sequential(
+        network = models.Sequential(
             [
                 layers.Input(shape=(self.num_states,)),
                 layers.Dense(256, activation="relu"),
@@ -56,8 +57,8 @@ class DQN(Algorithm):
                 layers.Dense(self.num_actions),
             ]
         )
-        model.compile(optimizer=optimizers.Adam(learning_rate=self.learning_rate), loss=losses.MeanSquaredError())  # type: ignore
-        return model
+        network.compile(optimizer=optimizers.Adam(learning_rate=self.learning_rate), loss=losses.MeanSquaredError())  # type: ignore
+        return network
 
     ##############################################
     def exploit_best_action(self, state: State, available_actions: list[CombatAction]) -> CombatAction:
@@ -138,11 +139,24 @@ class DQN(Algorithm):
         with tensorflow.GradientTape() as tape:
             # Forward pass to get the Q-values for the states (the ones before the next_states)
             q_values = self.q_network(states)
+            """
+            Now q_values is in the form of:
+            [[q-value of all actions for state 1],
+             [q-value of all actions for state 2],
+             [...]]
+            """
 
-            # For each Q-values array of all actions taken in a certain state, get the Q-value for only the action taken in that state
-            q_values = keras.ops.sum(q_values * keras.ops.one_hot(actions, self.num_actions), axis=1)
+            # For each of the Q-values array of all actions taken in a certain state, keep only the Q-value for the action actually took in each state
+            q_values = tf.gather(q_values, actions, batch_dims=1)
 
-            # Compute the loss (the mean squared error between the target-Q-values and the Q-values)
+            """
+            Now q_values is in the form of:
+            [q-value for state 1,
+             q-value for state 2,
+             ...]
+            """
+
+            # Compute the loss (the MSE between the target-Q-values and the Q-values)
             loss = keras.ops.mean(keras.ops.square(keras.ops.subtract(targets, q_values)))
 
         # Backpropagation
