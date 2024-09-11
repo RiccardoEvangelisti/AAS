@@ -6,6 +6,8 @@ from State import State
 from algorithms.Algorithm import Algorithm
 from combat_actions.CombatActions import CombatAction
 
+from tensorflow.python.framework.ops import enable_eager_execution
+
 import numpy as np
 import tensorflow as tf
 import keras
@@ -21,7 +23,7 @@ class DQN(Algorithm):
 
         self.pickle_filename = config.pickle_filename
 
-        self.all_actions = {actionName: index for index, actionName in enumerate(all_actions)}
+        self.all_actions = list([actionName for actionName in all_actions])
 
         self.num_states = num_states
         self.num_actions = len(all_actions)
@@ -47,6 +49,9 @@ class DQN(Algorithm):
 
         self.step_counter = 0  # for the target network update
 
+        enable_eager_execution()
+        print("Eager Execution:", tf.executing_eagerly())
+
     ##############################################
     def create_q_network(self):
         network = models.Sequential(
@@ -61,47 +66,39 @@ class DQN(Algorithm):
         return network
 
     ##############################################
-    def exploit_best_action(self, state: State, available_actions: list[CombatAction]) -> CombatAction:
+    @tf.function
+    def exploit_best_action_tf(self, state, valid_action_indices):
         # Get q-values for all actions in the current state, from the Q-network
-        q_values = self.q_network.predict(np.expand_dims(state.to_array(), axis=0), verbose=0)  # type: ignore # fed a batch of only one state
+        q_values = self.q_network(tf.expand_dims(state, axis=0))  # fed a batch of only one state
         q_values = q_values[0]  # get the first (and only) element (since the batch contains only one state)
 
-        # Filter to keep only actions that are available
-        valid_actions = {}  # actionIndex, combatAction
-        for available_action in available_actions:
-            valid_actions[self.all_actions[available_action.name]] = available_action
+        # Get q-values for only the valid actions
+        valid_q_values = tf.gather(q_values, valid_action_indices)
+        # Get the first index with highest q-value (yes, only the first)
+        max_q_value_index = tf.argmax(valid_q_values)
 
-        # Get q-values for the valid actions
-        valid_q_values = np.array([q_values[i] for i in valid_actions.keys()])
-        # Get the highest q-value
-        max_q_value = np.max(valid_q_values)
+        # Return the index of the first valid action with the highest q-value
+        return valid_action_indices[max_q_value_index]
 
-        # Get actions with the highest q-value
-        best_actions = [
-            combatAction for actionIndex, combatAction in valid_actions.items() if q_values[actionIndex] == max_q_value
-        ]
+    def exploit_best_action(self, state: State, available_actions: list[CombatAction]) -> CombatAction:
+        state_tf = tf.convert_to_tensor(state.to_array())
 
-        # Return a random action from the list of actions with the highest q-value
-        return random.choice(best_actions)
+        # Convert available_actions to list of action indices
+        valid_action_indices = tf.constant(
+            list(self.all_actions.index(av_action.name) for av_action in available_actions)
+        )
+
+        best_action_index = self.exploit_best_action_tf(state_tf, valid_action_indices)
+
+        for av_action in available_actions:
+            if av_action.name == self.all_actions[best_action_index.numpy()]:  # type: ignore
+                return av_action
+        raise ValueError("Action not found in available actions")
 
     ##############################################
-    def learn(self, state, action, reward, next_state, done, **kwargs):
 
-        # Get the available actions for the "next state" which is now the current (because we already took the step)
-        env: DnDEnvironment = kwargs.get("env")  # type: ignore
-        available_actions = env.get_playing_agent().available_actions(
-            env.grid, env.n_squares_height, env.n_squares_width
-        )
-        # Take only the action indexes of the available actions
-        valid_actions = []  # actionIndex
-        for av_action in available_actions:
-            valid_actions.append(self.all_actions[av_action.name])
-
-        ####
-
-        # Add the experience to the replay buffer
-        self.replay_buffer.append((state.to_array(), action, reward, next_state.to_array(), done, valid_actions))
-
+    @tf.function
+    def learn_tf(self):
         # Update the Q-network using a minibatch of experiences
 
         # Check if the replay buffer has enough experiences to sample a minibatch
@@ -111,30 +108,28 @@ class DQN(Algorithm):
         # Sample the minibatch from the replay buffer
         minibatch = random.sample(self.replay_buffer, self.minibatch_size)
 
-        states, actions, rewards, next_states, dones, valid_actions_batch = zip(*minibatch)
-        states = np.array(states)
-        actions = np.array([self.all_actions[action.name] for action in actions])
-        rewards = np.array(rewards)
-        next_states = np.array(next_states)
-        dones = np.array(dones)
+        states, actions, rewards, next_states, dones, valid_actions_indices_batch = zip(*minibatch)
+        states = tf.convert_to_tensor(np.array(states))
+        actions = tf.convert_to_tensor(np.array(actions))
+        rewards = tf.convert_to_tensor(np.array(rewards), dtype=tf.float32)
+        next_states = tf.convert_to_tensor(np.array(next_states))
+        dones = tf.convert_to_tensor(np.array(dones))
 
         # Get q-values for all actions in all the next_states, from the target-Q-network
-        q_values_next: np.ndarray = self.target_q_network.predict(next_states, verbose=0)  # type: ignore
+        q_values_next = self.target_q_network(next_states)
 
         # Max Q-value for each of the next states, filtering in only the valid actions for each state
-        max_q_values_next = np.array(
-            [np.max(q_values_next[i][valid_actions_batch[i]]) for i in range(self.minibatch_size)]
-        )
+        max_q_values_next = []
+        for i in range(self.minibatch_size):
+            valid_q_values_next = tf.gather(q_values_next[i], valid_actions_indices_batch[i])
+            max_q_value_next = tf.reduce_max(valid_q_values_next)
+            max_q_values_next.append(max_q_value_next)
+        max_q_values_next = tf.stack(max_q_values_next)
 
         # Get the target Q-values (the updated Q-value)
-        targets = np.zeros(self.minibatch_size)
-        for i in range(self.minibatch_size):
-            # If episode is done, the target Q-value is the reward
-            if dones[i]:
-                targets[i] = rewards[i]
-            # If episode is not done, the target Q-value is the reward + gamma * max Q-value of the next state
-            else:
-                targets[i] = rewards[i] + self.gamma * max_q_values_next[i]
+        # If episode is done, the target Q-value is the reward
+        # If episode is not done, the target Q-value is the reward + gamma * max Q-value of the next state
+        targets = tf.where(dones, rewards, rewards + self.gamma * max_q_values_next)
 
         with tensorflow.GradientTape() as tape:
             # Forward pass to get the Q-values for the states (the ones before the next_states)
@@ -168,6 +163,29 @@ class DQN(Algorithm):
         if self.step_counter == self.target_update_freq:
             self.target_q_network.set_weights(self.q_network.get_weights())
             self.step_counter = 0
+
+    def learn(self, state, action, reward, next_state, done, **kwargs):
+        # Get the available actions for the "next state" which is now the current (because we already took the step)
+        env: DnDEnvironment = kwargs.get("env")  # type: ignore
+        available_actions = env.get_playing_agent().available_actions(
+            env.grid, env.n_squares_height, env.n_squares_width
+        )
+
+        # Convert available_actions to list of action indices
+        valid_action_indices_tf = tf.constant(
+            list(self.all_actions.index(av_action.name) for av_action in available_actions)
+        )
+
+        state_tf = tf.constant(state.to_array())
+        action_tf = tf.constant(self.all_actions.index(action.name))
+        reward_tf = tf.constant(reward, dtype=tf.float32)
+        next_state_tf = tf.constant(next_state.to_array())
+        done_tf = tf.constant(done)
+
+        # Add the experience to the replay buffer
+        self.replay_buffer.append((state_tf, action_tf, reward_tf, next_state_tf, done_tf, valid_action_indices_tf))
+
+        self.learn_tf()
 
     ##############################################
     def save_value_function(self, pickle_filename):
