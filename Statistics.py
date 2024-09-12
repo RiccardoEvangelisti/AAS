@@ -26,29 +26,15 @@ class StatSaver:
         self.episode_stats_list.append(stats)
 
     def save_statistics(self):
-        dictionary = {}
-        for episode_stats in self.episode_stats_list:
-            dictionary[episode_stats.episode_number] = {
-                "winner": episode_stats.winner_name,
-                "hp_remaining_winner": episode_stats.winner_hp_remaining,
-                "total_reward": episode_stats.total_reward,
-                "list": [],
-            }
-
-            for agentName, actionList in episode_stats.actions_taken.items():
-                values, counts = np.unique(actionList, return_counts=True)
-                dictionary[episode_stats.episode_number]["list"].append(
-                    {agentName: {value: count for value, count in zip(values, counts)}}
-                )
 
         if os.path.exists(self.pickle_filename):
             with gzip.open(self.pickle_filename, "rb") as f:
-                old_dictionary = pickle.load(f)
-                old_dictionary.update(dictionary)
-                dictionary = old_dictionary
+                old_episode_stats_list = pickle.load(f)
+                old_episode_stats_list.extend(self.episode_stats_list)
+                self.episode_stats_list = old_episode_stats_list
 
         with gzip.open(self.pickle_filename, "wb") as f:
-            pickle.dump(dictionary, f)
+            pickle.dump(self.episode_stats_list, f)
 
         # Clear the list
         self.episode_stats_list = []
@@ -81,25 +67,14 @@ class EpisodeStats:
         self.__enemy_hp_remaining = value
 
     @property
-    def total_reward(self) -> int:
-        return self.__total_reward
-
-    @total_reward.setter
-    def total_reward(self, value: int):
-        self.__total_reward = value
-
-    @property
-    def actions_taken(self) -> dict[str, list[str]]:
+    def step_stats(self) -> list[tuple[str, str, int]]:
         return self.__actions_taken
 
-    @actions_taken.setter
-    def actions_taken(self, value: dict[str, list[str]]):
-        """Dictionary of actions taken by each player: {agentName, list[actions]}"""
+    @step_stats.setter
+    def step_stats(self, value: list[tuple[str, str, int]]):
+        """List of (agentName, action_taken, reward)"""
         self.__actions_taken = value
 
     def __init__(self, agentNames: list[str], episode_number):
         self.episode_number = episode_number
-        self.total_reward = 0
-        self.actions_taken = {}
-        for agentName in agentNames:
-            self.actions_taken[agentName] = []
+        self.step_stats = []

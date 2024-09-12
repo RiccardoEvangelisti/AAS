@@ -21,6 +21,8 @@ class DQN(Algorithm):
 
     def __init__(self, config, all_actions: list[str], num_states):
 
+        Algorithm.__init__(self, config.EPSILON, config.EPSILON_rateDecay)
+
         self.pickle_filename = config.pickle_filename
 
         self.all_actions = list([actionName for actionName in all_actions])
@@ -29,8 +31,6 @@ class DQN(Algorithm):
         self.num_actions = len(all_actions)
         self.gamma = config.GAMMA
         self.learning_rate = config.ALPHA
-        self.epsilon = config.EPSILON
-        self.epsilon_decay = config.EPSILON_rateDecay
         self.minibatch_size = config.minibatch_size
         self.target_update_freq = config.target_update_freq
 

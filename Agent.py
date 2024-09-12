@@ -53,6 +53,15 @@ class Agent(HasHP):
     def combatActions(self, value: dict[str, CombatAction]):
         self.__combatActions = value
 
+    # algorithm
+    @property
+    def algorithm(self):
+        return self.__algorithm
+
+    @algorithm.setter
+    def algorithm(self, value):
+        self.__algorithm = value
+
     # Constructor
     def __init__(self, name: str, image_path: str, RENDER_MODE: str):
         self.name = name

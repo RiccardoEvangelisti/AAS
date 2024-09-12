@@ -6,7 +6,6 @@ import logging, os
 logging.disable(logging.WARNING)  # disable TF logging
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
-from ActionSelection import ActionSelection
 from Config import Config
 from State import State
 from agent_interfaces.HasAttack import HasAttack
@@ -14,6 +13,7 @@ from agent_interfaces.HasMovement import HasMovement
 from algorithms.Algorithm import Algorithm
 from algorithms.DQN import DQN
 from algorithms.Q_Learning import Q_Learning
+from algorithms.Random import Random
 from combat_actions.Attack import Attack
 from combat_actions.CombatActions import CombatAction
 
@@ -107,6 +107,19 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
 #####################################
 
 
+def setAlgorithm(algorithm, env: DnDEnvironment) -> Algorithm:
+    # Take algorithms from config
+    if algorithm.name == config.Q_Learning.name:
+        return Q_Learning(config.Q_Learning)
+    elif algorithm.name == config.DQN.name:
+        state = State(env.get_playing_agent(), env.get_not_playing_agents()[0])
+        return DQN(config.DQN, env.get_all_actions(), len(state.to_array()))
+    elif algorithm.name == config.Random.name:
+        return Random(config.Random)
+    else:
+        raise Exception(f"Algorithm '{algorithm}' not found in config")
+
+
 def main():
 
     # Load config file
@@ -145,19 +158,11 @@ def main():
     env.place_agent(player, config.player.default_coordinates)
     env.place_agent(monster, config.monster.default_coordinates)
 
-    # Take algorithm from config
-    if config.algorithm.name == config.Q_Learning.name:
-        algorithm: Algorithm = Q_Learning(config.Q_Learning)
-    elif config.algorithm.name == config.DQN.name:
-        all_actions = env.get_all_actions()
-        state = State(env.get_playing_agent(), env.get_not_playing_agents()[0])
-        algorithm: Algorithm = DQN(config.DQN, all_actions, len(state.to_array()))
+    player.algorithm = setAlgorithm(config.player.algorithm, env)
+    monster.algorithm = setAlgorithm(config.monster.algorithm, env)
 
     # Statistics
-    stat_saver = StatSaver(config.algorithm.statistics_filename)
-
-    # Action Selection
-    action_selection = ActionSelection(config.algorithm.EPSILON, config.algorithm.EPSILON_rateDecay)
+    stat_saver = StatSaver(config.statistics_filename)
 
     ########################################################################
     # Episodes loop
@@ -178,11 +183,12 @@ def main():
         ####################################################################
         # Steps loop
         while not done:
+            playing_agent = env.get_playing_agent()
             print(
                 f"Episode {episode+1}/{config.num_episodes} progess: %",
                 (
                     max(
-                        100 - (100 * env.get_playing_agent().current_hp / env.get_playing_agent().max_hp),
+                        100 - (100 * playing_agent.current_hp / playing_agent.max_hp),
                         100
                         - (100 * env.get_not_playing_agents()[0].current_hp / env.get_not_playing_agents()[0].max_hp),
                     )
@@ -190,44 +196,39 @@ def main():
                 end="\r",
             )
             # Get available actions for the playing agent
-            available_actions = env.get_playing_agent().available_actions(
-                env.grid, env.n_squares_height, env.n_squares_width
-            )
+            available_actions = playing_agent.available_actions(env.grid, env.n_squares_height, env.n_squares_width)
             # Choose action
-            action = action_selection.epsilon_greedy(
-                state,
-                available_actions,
-                algorithm,
-            )
+            action = playing_agent.algorithm.epsilon_greedy(state, available_actions)
 
             # Take the chosen action and observe the next state and reward
             next_state, reward, done = step(action, available_actions, state, env)
 
             # Learning phase
-            algorithm.learn(state, action, reward, next_state, done, env=env)
+            playing_agent.algorithm.learn(state, action, reward, next_state, done, env=env)
 
             # Change state
             state = next_state
 
             # Statistics and render
-            statistics.actions_taken[env.get_playing_agent().name].append(action.name)
-            statistics.total_reward += reward
+            statistics.step_stats.append((playing_agent.name, action.name, reward))
             if config.RENDER.mode == "human":
                 pygame.time.wait(config.RENDER.wait_timestep_ms)
 
         # Statistics
-        statistics.winner_name = env.get_playing_agent().name
-        statistics.winner_hp_remaining = env.get_playing_agent().current_hp
+        statistics.winner_name = playing_agent.name
+        statistics.winner_hp_remaining = playing_agent.current_hp
         stat_saver.add_episode(statistics)
 
-        # Save value function and statistics
+        # Save value functions and statistics
         if (episode + 1) % config.saving_freq == 0:
-            algorithm.save_value_function(config.algorithm.pickle_filename)
+            player.algorithm.save_value_function(config.player.algorithm.pickle_filename)
+            monster.algorithm.save_value_function(config.monster.algorithm.pickle_filename)
             stat_saver.save_statistics()
 
     # Save in case of not saved in the loop
     if config.num_episodes % config.saving_freq != 0:
-        algorithm.save_value_function(config.algorithm.pickle_filename)
+        player.algorithm.save_value_function(config.player.algorithm.pickle_filename)
+        monster.algorithm.save_value_function(config.monster.algorithm.pickle_filename)
         stat_saver.save_statistics()
 
     if config.RENDER.mode == "human":

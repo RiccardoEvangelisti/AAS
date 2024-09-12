@@ -20,6 +20,8 @@ class Q_Learning(Algorithm):
 
     # Constructor
     def __init__(self, config):
+        Algorithm.__init__(self, config.EPSILON, config.EPSILON_rateDecay)
+        
         self.ALPHA = config.ALPHA  # Learning rate
         self.GAMMA = config.GAMMA  # Discount factor
         self.pickle_filename = config.pickle_filename

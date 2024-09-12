@@ -7,34 +7,22 @@ RENDER:
 n_squares_width: 6
 n_squares_height: 5
 
-# Agents
-player:
-    max_hp: 80
-    movement_speed: 6
-    attack_damage: 5
-    attacks_max_number: 1
-    picture_path: "pictures/Erik combat pose-token.png"
-    name: "Erik"
-    default_coordinates: "random"
-
-monster:
-    max_hp: 100
-    movement_speed: 3
-    attack_damage: 10
-    attacks_max_number: 1
-    picture_path: "pictures/mimic2-token.png"
-    name: "Mimic"
-    default_coordinates: "random"
+############################################
+# Random
+Random: &Random
+    name: "Random"
+    EPSILON: 1
+    EPSILON_rateDecay: 1
+    pickle_filename: ""
 
 # Q_learning parameters
 Q_Learning: &Q_Learning
     name: "Q_Learning"
-    EPSILON: 0.01
+    EPSILON: 0.05
     EPSILON_rateDecay: 1 # Exploration rate decay
     ALPHA: 0.1 # Learning rate
-    GAMMA: 0.7 # Discount factor
+    GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/q_learning_values.pkl"
-    statistics_filename: "statistics/q_learning_statistics.pkl.gz"
 
 # DQN parameters
 DQN: &DQN
@@ -47,9 +35,30 @@ DQN: &DQN
     ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/dqn_values.pkl"
-    statistics_filename: "statistics/dqn_statistics.pkl.gz"
+
+############################################
+# Agents
+player:
+    max_hp: 50
+    movement_speed: 5
+    attack_damage: 10
+    attacks_max_number: 1
+    picture_path: "pictures/Erik combat pose-token.png"
+    name: "Erik"
+    default_coordinates: "random"
+    algorithm: *DQN # NEEDS to be an alias of the algorithm (the "*")
+
+monster:
+    max_hp: 100
+    movement_speed: 3
+    attack_damage: 10
+    attacks_max_number: 2
+    picture_path: "pictures/mimic2-token.png"
+    name: "Mimic"
+    default_coordinates: "random"
+    algorithm: *Random # NEEDS to be an alias of the algorithm (the "*")
 
 # Training
 num_episodes: 100000
-algorithm: *Q_Learning # NEEDS to be an alias of the algorithm (the "*")
-saving_freq: 10000
+saving_freq: 100
+statistics_filename: "statistics/statistics.pkl.gz"
