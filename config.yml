@@ -1,11 +1,11 @@
 # Graphics
 RENDER:
-    mode: #"human"
+    mode: "human"
     wait_timestep_ms: 100
 
 # Grid
-n_squares_width: 6
-n_squares_height: 5
+n_squares_width: 7
+n_squares_height: 6
 
 ############################################
 # Random
@@ -46,7 +46,7 @@ player:
     picture_path: "pictures/Erik combat pose-token.png"
     name: "Erik"
     default_coordinates: "random"
-    algorithm: *DQN # NEEDS to be an alias of the algorithm (the "*")
+    algorithm: *Q_Learning # NEEDS to be an alias of the algorithm (the "*")
 
 monster:
     max_hp: 100
@@ -60,5 +60,5 @@ monster:
 
 # Training
 num_episodes: 100000
-saving_freq: 100
+saving_freq: 10000
 statistics_filename: "statistics/statistics.pkl.gz"

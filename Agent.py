@@ -113,7 +113,7 @@ class Player(Agent, HasHP, HasEndTurn, HasMovement, HasAttack):
         self.save_actions(self.get_all_movements())
 
         HasAttack.__init__(self, attacks_max_number)
-        self.save_action(self.get_combat_action_MeleeAttack(attack_damage))
+        # self.save_action(self.get_combat_action_MeleeAttack(attack_damage))
         self.save_action(self.get_combat_action_RangedAttack(attack_damage, 3))
 
 

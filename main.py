@@ -61,7 +61,7 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
     #######################
     # Check if the enemy (of the old state) had more hp that now (now in the new state), i.e. it took damage
     if OLD_enemy_agent_HP > OLD_enemy_agent.current_hp:
-        reward = 3
+        reward = 4
         done = False
         return new_state, reward, done
 
