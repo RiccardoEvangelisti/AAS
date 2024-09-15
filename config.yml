@@ -1,6 +1,6 @@
 # Graphics
 RENDER:
-    mode: "human"
+    mode: #"human"
     wait_timestep_ms: 100
 
 # Grid
@@ -61,4 +61,4 @@ monster:
 # Training
 num_episodes: 100000
 saving_freq: 10000
-statistics_filename: "statistics/statistics.pkl.gz"
+statistics_filename: "statistics/statistics"

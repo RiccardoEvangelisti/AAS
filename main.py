@@ -162,7 +162,7 @@ def main():
     monster.algorithm = setAlgorithm(config.monster.algorithm, env)
 
     # Statistics
-    stat_saver = StatSaver(config.statistics_filename)
+    stat_saver = StatSaver(config.statistics_filename, config.saving_freq)
 
     ########################################################################
     # Episodes loop
@@ -219,11 +219,10 @@ def main():
         statistics.winner_hp_remaining = playing_agent.current_hp
         stat_saver.add_episode(statistics)
 
-        # Save value functions and statistics
+        # Save value functions
         if (episode + 1) % config.saving_freq == 0:
             player.algorithm.save_value_function(config.player.algorithm.pickle_filename)
             monster.algorithm.save_value_function(config.monster.algorithm.pickle_filename)
-            stat_saver.save_statistics()
 
     # Save in case of not saved in the loop
     if config.num_episodes % config.saving_freq != 0:
