@@ -14,7 +14,7 @@ from algorithms.Algorithm import Algorithm
 from algorithms.DQN import DQN
 from algorithms.Q_Learning import Q_Learning
 from algorithms.Random import Random
-from algorithms.Manual import Raw
+from algorithms.Raw import Raw
 from combat_actions.Attack import Attack
 from combat_actions.CombatActions import CombatAction
 
