@@ -59,6 +59,13 @@ class DnDEnvironment:
             # Target takes damage
             target_agent.took_damage(action.attack_damage)
             playing_agent.attacked()
+            if RENDER_MODE == "human":
+                self.render_grid()
+                for agent in self.agents:
+                    if agent.id == action.target_id:
+                        self.render_agent(agent, attack_mode=True)
+                    else:
+                        self.render_agent(agent)
 
         if action.name == RangedAttack.name and isinstance(playing_agent, HasAttack):
             # Get the agent that is being attacked
@@ -66,6 +73,13 @@ class DnDEnvironment:
             # Target takes damage
             target_agent.took_damage(action.attack_damage)
             playing_agent.attacked()
+            if RENDER_MODE == "human":
+                self.render_grid()
+                for agent in self.agents:
+                    if agent.id == action.target_id:
+                        self.render_agent(agent, attack_mode=True)
+                    else:
+                        self.render_agent(agent)
 
         if action.name == EndTurn.name:
             self.change_turn()
@@ -248,14 +262,14 @@ class DnDEnvironment:
     def grid_to_screen_position(self, grid_position):
         return (grid_position[0] * SQUARE_SIZE, grid_position[1] * SQUARE_SIZE)
 
-    def render_agent(self, agent: Agent):
+    def render_agent(self, agent: Agent, attack_mode: bool = False):
         screen = pygame.display.get_surface()
+        
         # Draw the agent
         agent.image_obj = pygame.transform.smoothscale(agent.image_obj, (SQUARE_SIZE, SQUARE_SIZE))
-        screen.blit(
-            (agent.image_obj.convert() if agent.id == self.get_playing_agent().id else agent.image_obj),
-            self.grid_to_screen_position(agent.coordinates),
-        )
+        agent_image = agent.image_obj.convert() if agent.id == self.get_playing_agent().id else agent.image_obj
+        screen.blit(agent_image, self.grid_to_screen_position(agent.coordinates))
+        
         # Draw the agent's health bar
         health_bar_width = (agent.current_hp / agent.max_hp) * SQUARE_SIZE
         health_bar_height = SQUARE_SIZE / 10
@@ -263,8 +277,20 @@ class DnDEnvironment:
         y += SQUARE_SIZE - health_bar_height
         pygame.draw.rect(screen, "green", (x, y, health_bar_width, health_bar_height))
         pygame.draw.rect(screen, "black", (x, y, SQUARE_SIZE, health_bar_height), 1)  # black border
+        
+        # If attack_mode is True, add graphical elements to indicate an attack
+        if attack_mode:
+            attack_color = "red"
+            radius = SQUARE_SIZE // 2
+            x, y = self.grid_to_screen_position(agent.coordinates)
+            pygame.draw.circle(screen, attack_color, (x + SQUARE_SIZE // 2, y + SQUARE_SIZE // 2), radius, 5)  # Red circle around agent
+            
+            pygame.draw.line(screen, attack_color, (x, y), (x + SQUARE_SIZE, y + SQUARE_SIZE), 3)  # Diagonal line
+            pygame.draw.line(screen, attack_color, (x + SQUARE_SIZE, y), (x, y + SQUARE_SIZE), 3)  # Opposite diagonal line
+        
         # Update the full display Surface to the screen
         pygame.display.flip()
+
 
     def get_all_actions(self) -> list[str]:
         actions: list[str] = []
