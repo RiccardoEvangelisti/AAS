@@ -15,6 +15,13 @@ Random: &Random
     EPSILON_rateDecay: 1
     pickle_filename: ""
 
+# Raw 
+Raw: &Raw
+    name: "Raw"
+    EPSILON: 0
+    EPSILON_rateDecay: 1
+    pickle_filename: ""
+
 # Q_learning parameters
 Q_Learning: &Q_Learning
     name: "Q_Learning"
@@ -56,9 +63,9 @@ monster:
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
-    algorithm: *Random # NEEDS to be an alias of the algorithm (the "*")
+    algorithm: *Raw # NEEDS to be an alias of the algorithm (the "*")
 
 # Training
 num_episodes: 100000
-saving_freq: 10000
+saving_freq: 100000
 statistics_filename: "statistics/statistics"
