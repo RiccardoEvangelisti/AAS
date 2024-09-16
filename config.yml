@@ -15,9 +15,9 @@ Random: &Random
     EPSILON_rateDecay: 1
     pickle_filename: ""
 
-# Raw 
-Raw: &Raw
-    name: "Raw"
+# Handcrafted 
+Handcrafted: &Handcrafted
+    name: "Handcrafted"
     EPSILON: 0
     EPSILON_rateDecay: 1
     pickle_filename: ""
@@ -63,7 +63,7 @@ monster:
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
-    algorithm: *Raw # NEEDS to be an alias of the algorithm (the "*")
+    algorithm: *Handcrafted # NEEDS to be an alias of the algorithm (the "*")
 
 # Training
 num_episodes: 100000
