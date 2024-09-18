@@ -29,7 +29,7 @@ Q_Learning: &Q_Learning
     EPSILON_rateDecay: 1 # Exploration rate decay
     ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
-    pickle_filename: "outputs/q_learning_values.pkl"
+    pickle_filename: "outputs/q_learning_values"
 
 # DQN parameters
 DQN: &DQN
@@ -41,7 +41,7 @@ DQN: &DQN
     EPSILON_rateDecay: 1 # Exploration rate decay
     ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
-    pickle_filename: "outputs/dqn_values.pkl"
+    pickle_filename: "outputs/dqn_values"
 
 ############################################
 # Agents
@@ -68,7 +68,7 @@ monster:
 # Training
 num_episodes: 200000
 saving_freq: 200000
-train_code: "Y"
+train_code: "B"
 
 # statistics_filename: "statistics/QL_SR_MimicFull_Random_A"
 
