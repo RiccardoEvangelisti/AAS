@@ -118,8 +118,8 @@ def setAlgorithm(algorithm, env: DnDEnvironment) -> Algorithm:
         return DQN(config.DQN, env.get_all_actions(), len(state.to_array()))
     elif algorithm.name == config.Random.name:
         return Random(config.Random)
-    elif algorithm.name == config.Manual.name:
-        return RuleBased(config.Manual, env)
+    elif algorithm.name == config.RuleBased.name:
+        return RuleBased(config.RuleBased, env)
     else:
         raise Exception(f"Algorithm '{algorithm}' not found in config")
 
