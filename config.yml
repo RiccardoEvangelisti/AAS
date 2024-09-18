@@ -63,7 +63,7 @@ monster:
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
-    algorithm: *RuleBased # NEEDS to be an alias of the algorithm (the "*")
+    algorithm: *Random # NEEDS to be an alias of the algorithm (the "*")
 
 # Training
 num_episodes: 200000
@@ -72,10 +72,10 @@ train_code: "Y"
 
 # statistics_filename: "statistics/QL_SR_MimicFull_Random_A"
 
-# statistics_filename: "statistics/QL_AR_MimicFull_Random_Z"
+statistics_filename: "statistics/QL_AR_MimicFull_Random_B"
 
 # statistics_filename: "statistics/QL_AR_MimicFull_RuleBased_X"
-statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_Y"
+# statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_Y"
 # statistics_filename: "statistics/QL_SR_MimicNoMovementNoAttack_RuleBased_W1"
 # statistics_filename: "statistics/QL_SR_MimicNoMovement_RuleBased_W2"
 # statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_W3"

@@ -19,7 +19,7 @@ class StatSaver:
         file_exists = True
         last_episode_number = -1
         while file_exists:
-            current_filename = f"{self.pickle_filename}_{self.current_file_index}.pkl.gz"
+            current_filename = f"{self.pickle_filename}_save{self.current_file_index}.pkl.gz"
             if os.path.exists(current_filename):
                 with gzip.open(current_filename, "rb") as f:
                     stats = pickle.load(f)
@@ -34,7 +34,7 @@ class StatSaver:
         return self.__last_episode_number
 
     def __save_current_file(self):
-        current_filename = f"{self.pickle_filename}_{self.current_file_index}.pkl.gz"
+        current_filename = f"{self.pickle_filename}_save{self.current_file_index}.pkl.gz"
         if os.path.exists(current_filename):
             with gzip.open(current_filename, "rb") as f:
                 old_episode_stats_list = pickle.load(f)
@@ -64,7 +64,7 @@ class StatSaver:
         episode_stats_list = []
         file_index = 0
         while True:
-            current_filename = f"{pickle_filename}_{file_index}.pkl.gz"
+            current_filename = f"{pickle_filename}_save{file_index}.pkl.gz"
             if not os.path.exists(current_filename):
                 break
             with gzip.open(current_filename, "rb") as f:
