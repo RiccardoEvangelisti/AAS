@@ -68,17 +68,20 @@ monster:
 # Training
 num_episodes: 200000
 saving_freq: 200000
+train_code: "Y"
+
 # statistics_filename: "statistics/QL_SR_MimicFull_Random_A"
-# statistics_filename: "statistics/QL_SR_MimicNoMovementNoAttack_Random_B1"
-# statistics_filename: "statistics/QL_SR_MimicNoMovement_Random_B2"
-# statistics_filename: "statistics/QL_SR_MimicFull_Random_B3"
 
 # statistics_filename: "statistics/QL_AR_MimicFull_Random_Z"
 
-statistics_filename: "statistics/QL_AR_MimicFull_RuleBased_X"
+# statistics_filename: "statistics/QL_AR_MimicFull_RuleBased_X"
+statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_Y"
+# statistics_filename: "statistics/QL_SR_MimicNoMovementNoAttack_RuleBased_W1"
+# statistics_filename: "statistics/QL_SR_MimicNoMovement_RuleBased_W2"
+# statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_W3"
 
 
 
 
 # Reward System
-advanced_reward: True
+advanced_reward: False

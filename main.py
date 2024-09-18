@@ -165,6 +165,9 @@ def main():
     player.algorithm = setAlgorithm(config.player.algorithm, env)
     monster.algorithm = setAlgorithm(config.monster.algorithm, env)
 
+    player_algorithm_filename = config.player.algorithm.pickle_filename + "_" + config.train_code
+    monster_algorithm_filename = config.monster.algorithm.pickle_filename + "_" + config.train_code
+
     # Statistics
     stat_saver = StatSaver(config.statistics_filename, config.saving_freq)
 
@@ -225,13 +228,13 @@ def main():
 
         # Save value functions
         if (episode + 1) % config.saving_freq == 0:
-            player.algorithm.save_value_function(config.player.algorithm.pickle_filename)
-            monster.algorithm.save_value_function(config.monster.algorithm.pickle_filename)
+            player.algorithm.save_value_function(player_algorithm_filename)
+            monster.algorithm.save_value_function(monster_algorithm_filename)
 
     # Save in case of not saved in the loop
     if config.num_episodes % config.saving_freq != 0:
-        player.algorithm.save_value_function(config.player.algorithm.pickle_filename)
-        monster.algorithm.save_value_function(config.monster.algorithm.pickle_filename)
+        player.algorithm.save_value_function(player_algorithm_filename)
+        monster.algorithm.save_value_function(monster_algorithm_filename)
         stat_saver.save_statistics()
 
     if config.RENDER.mode == "human":
