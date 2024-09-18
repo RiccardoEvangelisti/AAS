@@ -1,7 +1,7 @@
 # Graphics
 RENDER:
     mode: #"human"
-    wait_timestep_ms: 100
+    wait_timestep_ms: 300
 
 # Grid
 n_squares_width: 7
@@ -63,12 +63,17 @@ monster:
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
-    algorithm: *Handcrafted # NEEDS to be an alias of the algorithm (the "*")
+    algorithm: *Random # NEEDS to be an alias of the algorithm (the "*")
 
 # Training
 num_episodes: 100000
 saving_freq: 100000
-statistics_filename: "statistics/statistics"
+statistics_filename: "statistics/QL_SR_MimicFull_Random_A"
+# statistics_filename: "statistics/QL_SR_MimicNoMovementNoAttack_Random_B1"
+# statistics_filename: "statistics/QL_SR_MimicNoMovement_Random_B2"
+# statistics_filename: "statistics/QL_SR_MimicFull_Random_B3"
+# statistics_filename: "statistics/QL_AR_MimicFull_Random_Z"
+
 
 # Reward System
 advanced_reward: True
