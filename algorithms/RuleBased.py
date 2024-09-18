@@ -8,7 +8,7 @@ from combat_actions.EndTurn import EndTurn
 from combat_actions.Movement import *
 
 
-class Handcrafted(Algorithm):
+class RuleBased(Algorithm):
 
     def __init__(self, config, env: DnDEnvironment):
         Algorithm.__init__(self, config.EPSILON, config.EPSILON_rateDecay)

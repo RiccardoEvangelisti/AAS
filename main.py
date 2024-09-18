@@ -14,7 +14,7 @@ from algorithms.Algorithm import Algorithm
 from algorithms.DQN import DQN
 from algorithms.Q_Learning import Q_Learning
 from algorithms.Random import Random
-from algorithms.Handcrafted import Handcrafted
+from algorithms.RuleBased import RuleBased
 from combat_actions.Attack import Attack
 from combat_actions.CombatActions import CombatAction
 
@@ -119,7 +119,7 @@ def setAlgorithm(algorithm, env: DnDEnvironment) -> Algorithm:
     elif algorithm.name == config.Random.name:
         return Random(config.Random)
     elif algorithm.name == config.Manual.name:
-        return Handcrafted(config.Manual, env)
+        return RuleBased(config.Manual, env)
     else:
         raise Exception(f"Algorithm '{algorithm}' not found in config")
 
