@@ -165,8 +165,8 @@ def main():
     player.algorithm = setAlgorithm(config.player.algorithm, env)
     monster.algorithm = setAlgorithm(config.monster.algorithm, env)
 
-    player_algorithm_filename = config.player.algorithm.pickle_filename + "_" + config.train_code
-    monster_algorithm_filename = config.monster.algorithm.pickle_filename + "_" + config.train_code
+    player_algorithm_filename = config.player.algorithm.pickle_filename + "_" + config.train_code + ".pkl"
+    monster_algorithm_filename = config.monster.algorithm.pickle_filename + "_" + config.train_code + ".pkl"
 
     # Statistics
     stat_saver = StatSaver(config.statistics_filename, config.saving_freq)
