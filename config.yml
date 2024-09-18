@@ -69,3 +69,6 @@ monster:
 num_episodes: 100000
 saving_freq: 100000
 statistics_filename: "statistics/statistics"
+
+# Reward System
+advanced_reward: True

@@ -68,35 +68,36 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
 
     #######################
     # Check if the agent took the EndTurn action but still he could made an attack (number of attaks left > 0 AND if it had an Attack action available)
-    if (
-        action.name == "EndTurn"  # if took EndTurn action
-        and OLD_playing_agent_is_attack_available  # if it had attacks left
-        and any(isinstance(a, Attack) for a in available_actions)  # if it had an Attack action available
-    ):
-        reward = -5
-        done = False
-        return new_state, reward, done
+    if config.advanced_reward:
+        if (
+            action.name == "EndTurn"  # if took EndTurn action
+            and OLD_playing_agent_is_attack_available  # if it had attacks left
+            and any(isinstance(a, Attack) for a in available_actions)  # if it had an Attack action available
+        ):
+            reward = -5
+            done = False
+            return new_state, reward, done
 
-    #######################
-    # Check if the agent took the EndTurn action but still has movement to go in range for an attack
-    max_range = 0
-    # Take the maximum range of the all attacks that the agent is capable of
-    for _a in OLD_playing_agent.combatActions.values():
-        if isinstance(_a, Attack):
-            if _a.attack_range > max_range:
-                max_range = _a.attack_range
-    chebyshev_distance = max(
-        abs(OLD_playing_agent_coord[0] - OLD_enemy_agent_coord[0]),
-        abs(OLD_playing_agent_coord[1] - OLD_enemy_agent_coord[1]),
-    )
-    if (
-        action.name == "EndTurn"  # if took EndTurn action
-        and OLD_playing_agent_is_attack_available  # if it had attacks left
-        and chebyshev_distance - max_range <= OLD_playing_agent_movement_left
-    ):
-        reward = -3
-        done = False
-        return new_state, reward, done
+        #######################
+        # Check if the agent took the EndTurn action but still has movement to go in range for an attack
+        max_range = 0
+        # Take the maximum range of the all attacks that the agent is capable of
+        for _a in OLD_playing_agent.combatActions.values():
+            if isinstance(_a, Attack):
+                if _a.attack_range > max_range:
+                    max_range = _a.attack_range
+        chebyshev_distance = max(
+            abs(OLD_playing_agent_coord[0] - OLD_enemy_agent_coord[0]),
+            abs(OLD_playing_agent_coord[1] - OLD_enemy_agent_coord[1]),
+        )
+        if (
+            action.name == "EndTurn"  # if took EndTurn action
+            and OLD_playing_agent_is_attack_available  # if it had attacks left
+            and chebyshev_distance - max_range <= OLD_playing_agent_movement_left
+        ):
+            reward = -3
+            done = False
+            return new_state, reward, done
 
     #######################
     # Otherwise

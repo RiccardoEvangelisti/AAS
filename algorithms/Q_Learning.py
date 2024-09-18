@@ -61,7 +61,7 @@ class Q_Learning(Algorithm):
         # Get the dictionary of q-values for the current state
         state_q_values = self.q_dict.get(state.to_bytes(), {})
 
-        # Get current value of Q(s, a) (if not exist, default to 0)
+        # Get current value of Q(s, a) (if not exist (i.e.never taken), default to 0)
         q_value_current = state_q_values.get(action.name, 0)
 
         # Get q-values for the next state
