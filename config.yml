@@ -65,23 +65,20 @@ monster:
     default_coordinates: "random"
     algorithm: *Random # NEEDS to be an alias of the algorithm (the "*")
 
+# Reward System
+advanced_reward: False
+
 # Training
 num_episodes: 200000
 saving_freq: 200000
-train_code: "B"
+train_code: "A"
 
-# statistics_filename: "statistics/QL_SR_MimicFull_Random_A"
+statistics_filename: "statistics/QL_SR_MimicFull_Random_A"
 
-statistics_filename: "statistics/QL_AR_MimicFull_Random_B"
+# statistics_filename: "statistics/QL_AR_MimicFull_Random_B"
 
 # statistics_filename: "statistics/QL_AR_MimicFull_RuleBased_X"
 # statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_Y"
 # statistics_filename: "statistics/QL_SR_MimicNoMovementNoAttack_RuleBased_W1"
 # statistics_filename: "statistics/QL_SR_MimicNoMovement_RuleBased_W2"
 # statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_W3"
-
-
-
-
-# Reward System
-advanced_reward: False
