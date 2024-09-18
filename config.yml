@@ -66,8 +66,8 @@ monster:
     algorithm: *RuleBased # NEEDS to be an alias of the algorithm (the "*")
 
 # Training
-num_episodes: 100000
-saving_freq: 100000
+num_episodes: 200000
+saving_freq: 200000
 # statistics_filename: "statistics/QL_SR_MimicFull_Random_A"
 # statistics_filename: "statistics/QL_SR_MimicNoMovementNoAttack_Random_B1"
 # statistics_filename: "statistics/QL_SR_MimicNoMovement_Random_B2"
