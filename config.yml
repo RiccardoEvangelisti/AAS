@@ -75,11 +75,26 @@ train_code: "B"
 
 # Experiment A
 # statistics_filename: "statistics/QL_A"
-# QL, Simple Reward, Mimic Full abilities, Mimic Random Strategy
+# + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic Random Strategy, 200k episodes
 
 # Experiment B
 statistics_filename: "statistics/QL_B"
-# QL, Advanced Reward, Mimic Full abilities, Mimic Random Strategy
+# + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic Random Strategy, 200k episodes
+
+# Experiment C
+# statistics_filename: "statistics/QL_C"
+# + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 200k episodes
+
+# Experiment D
+# statistics_filename: "statistics/QL_D"
+# + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 200k episodes
+
+# Experiment E
+# statistics_filename: "statistics/QL_E"
+# + QL, Simple Reward, Mimic NoMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
+# + QL, Simple Reward, Mimic YesMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
+# + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 100k episodes
+
 
 # statistics_filename: "statistics/QL_AR_MimicFull_RuleBased_X"
 # statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_Y"
