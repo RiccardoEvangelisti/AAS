@@ -63,26 +63,26 @@ monster:
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
-    algorithm: *Random # NEEDS to be an alias of the algorithm (the "*")
+    algorithm: *RuleBased # NEEDS to be an alias of the algorithm (the "*")
 
 # Reward System
-advanced_reward: True
+advanced_reward: False
 
 # Training
 num_episodes: 200000
 saving_freq: 200000
-train_code: "B"
+train_code: "C"
 
 # Experiment A
 # statistics_filename: "statistics/QL_A"
 # + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic Random Strategy, 200k episodes
 
 # Experiment B
-statistics_filename: "statistics/QL_B"
+# statistics_filename: "statistics/QL_B"
 # + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic Random Strategy, 200k episodes
 
 # Experiment C
-# statistics_filename: "statistics/QL_C"
+statistics_filename: "statistics/QL_C"
 # + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 200k episodes
 
 # Experiment D
