@@ -1,7 +1,7 @@
 # Graphics
 RENDER:
     mode: #"human"
-    wait_timestep_ms: 300
+    wait_timestep_ms: 700
 
 # Grid
 n_squares_width: 7
@@ -66,14 +66,14 @@ monster:
     algorithm: *RuleBased # NEEDS to be an alias of the algorithm (the "*")
 
 # Reward System
-advanced_reward: True
+advanced_reward: False
 
 ############################################
 
 # Training
-num_episodes: 200000
-saving_freq: 200000
-train_code: "D"
+num_episodes: 100000
+saving_freq: 100000
+train_code: "E"
 
 # Experiment A
 # statistics_filename: "statistics/QL_A"
@@ -88,18 +88,11 @@ train_code: "D"
 # + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 200k episodes
 
 # Experiment D
-statistics_filename: "statistics/QL_D"
+# statistics_filename: "statistics/QL_D"
 # + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 200k episodes
 
 # Experiment E
-# statistics_filename: "statistics/QL_E"
+statistics_filename: "statistics/QL_E"
 # + QL, Simple Reward, Mimic NoMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
 # + QL, Simple Reward, Mimic YesMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
 # + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 100k episodes
-
-
-# statistics_filename: "statistics/QL_AR_MimicFull_RuleBased_X"
-# statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_Y"
-# statistics_filename: "statistics/QL_SR_MimicNoMovementNoAttack_RuleBased_W1"
-# statistics_filename: "statistics/QL_SR_MimicNoMovement_RuleBased_W2"
-# statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_W3"
