@@ -66,15 +66,20 @@ monster:
     algorithm: *Random # NEEDS to be an alias of the algorithm (the "*")
 
 # Reward System
-advanced_reward: False
+advanced_reward: True
 
 # Training
 num_episodes: 200000
 saving_freq: 200000
 train_code: "B"
 
-# statistics_filename: "statistics/QL_SR_MimicFull_Random_A"
-statistics_filename: "statistics/QL_AR_MimicFull_Random_B"
+# Experiment A
+# statistics_filename: "statistics/QL_A"
+# QL, Simple Reward, Mimic Full abilities, Mimic Random Strategy
+
+# Experiment B
+statistics_filename: "statistics/QL_B"
+# QL, Advanced Reward, Mimic Full abilities, Mimic Random Strategy
 
 # statistics_filename: "statistics/QL_AR_MimicFull_RuleBased_X"
 # statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_Y"
