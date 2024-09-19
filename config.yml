@@ -58,8 +58,8 @@ player:
 monster:
     max_hp: 100
     movement_speed: 3
-    attack_damage: 0 #10
-    attacks_max_number: 0 #2
+    attack_damage: 10
+    attacks_max_number: 2
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
