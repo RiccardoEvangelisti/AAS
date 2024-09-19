@@ -1,11 +1,12 @@
-import pygame
-import yaml
 import subprocess
 import logging, os
 
 logging.disable(logging.WARNING)  # disable TF logging
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+
+import pygame
+import yaml
 
 from Config import Config
 from State import State
