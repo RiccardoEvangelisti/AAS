@@ -71,11 +71,10 @@ advanced_reward: False
 # Training
 num_episodes: 200000
 saving_freq: 200000
-train_code: "A"
+train_code: "B"
 
-statistics_filename: "statistics/QL_SR_MimicFull_Random_A"
-
-# statistics_filename: "statistics/QL_AR_MimicFull_Random_B"
+# statistics_filename: "statistics/QL_SR_MimicFull_Random_A"
+statistics_filename: "statistics/QL_AR_MimicFull_Random_B"
 
 # statistics_filename: "statistics/QL_AR_MimicFull_RuleBased_X"
 # statistics_filename: "statistics/QL_SR_MimicFull_RuleBased_Y"
