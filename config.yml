@@ -11,7 +11,7 @@ n_squares_height: 6
 # Training
 num_episodes: 50000
 saving_freq: 50000
-train_code: &train_code "F"
+train_code: &train_code "G"
 
 ############################################
 # Random
@@ -65,16 +65,16 @@ player:
 
 monster:
     max_hp: 100
-    movement_speed: 3
-    attack_damage: 10 #5 #10
-    attacks_max_number: 2 #1 #2
+    movement_speed: 0 #3
+    attack_damage: 0 #5 #10
+    attacks_max_number: 0 #1 #2
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
     algorithm: *RuleBased # NEEDS to be an alias of the algorithm (the "*")
 
 # Reward System
-advanced_reward: True
+advanced_reward: False
 
 ############################################
 
@@ -101,13 +101,13 @@ advanced_reward: True
 # + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
 
 # Experiment F
-statistics_filename: "statistics/QL_F"
+# statistics_filename: "statistics/QL_F"
 # + QL, Advanced Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
 # + QL, Advanced Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
 # + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
 
 # Experiment G
-# statistics_filename: "statistics/QL_G"
+statistics_filename: "statistics/QL_G"
 # + QL, Simple Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement HalfAttacks HalfDamage, Mimic RuleBased Strategy, 100k episodes
