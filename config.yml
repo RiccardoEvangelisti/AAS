@@ -66,12 +66,14 @@ monster:
     algorithm: *RuleBased # NEEDS to be an alias of the algorithm (the "*")
 
 # Reward System
-advanced_reward: False
+advanced_reward: True
+
+############################################
 
 # Training
 num_episodes: 200000
 saving_freq: 200000
-train_code: "C"
+train_code: "D"
 
 # Experiment A
 # statistics_filename: "statistics/QL_A"
@@ -82,11 +84,11 @@ train_code: "C"
 # + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic Random Strategy, 200k episodes
 
 # Experiment C
-statistics_filename: "statistics/QL_C"
+# statistics_filename: "statistics/QL_C"
 # + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 200k episodes
 
 # Experiment D
-# statistics_filename: "statistics/QL_D"
+statistics_filename: "statistics/QL_D"
 # + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 200k episodes
 
 # Experiment E
