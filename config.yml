@@ -65,7 +65,7 @@ player:
 
 monster:
     max_hp: 100
-    movement_speed: 0 #3
+    movement_speed: 3
     attack_damage: 0 #5 #10
     attacks_max_number: 0 #1 #2
     picture_path: "pictures/mimic2-token.png"
@@ -110,6 +110,6 @@ advanced_reward: False
 statistics_filename: "statistics/QL_G"
 # + QL, Simple Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
-# + QL, Simple Reward, Mimic FullMovement HalfAttacks HalfDamage, Mimic RuleBased Strategy, 100k episodes
+# + QL, Simple Reward, Mimic FullMovement HalfAttacks HalfDamage, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement HalfAttacks FullDamage, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
