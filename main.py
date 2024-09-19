@@ -5,6 +5,7 @@ import logging, os
 
 logging.disable(logging.WARNING)  # disable TF logging
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
 from Config import Config
 from State import State
