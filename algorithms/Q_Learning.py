@@ -21,15 +21,16 @@ class Q_Learning(Algorithm):
     # Constructor
     def __init__(self, config):
         Algorithm.__init__(self, config.EPSILON, config.EPSILON_rateDecay)
-        
+
         self.ALPHA = config.ALPHA  # Learning rate
         self.GAMMA = config.GAMMA  # Discount factor
-        self.pickle_filename = config.pickle_filename
+        self.pickle_filename = config.pickle_filename + "_" + config.train_code + ".pkl"
 
         # Load value-function from file, if it exists
         if os.path.exists(self.pickle_filename):
             with open(self.pickle_filename, "rb") as f:
                 self.q_dict = pickle.load(f)
+                print("Loaded %s" % self.pickle_filename)
         else:
             self.q_dict = {}
 

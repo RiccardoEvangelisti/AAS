@@ -23,7 +23,7 @@ class DQN(Algorithm):
 
         Algorithm.__init__(self, config.EPSILON, config.EPSILON_rateDecay)
 
-        self.pickle_filename = config.pickle_filename
+        self.pickle_filename = config.pickle_filename + "_" + config.train_code + ".pkl"
 
         self.all_actions = list([actionName for actionName in all_actions])
 
@@ -41,6 +41,7 @@ class DQN(Algorithm):
             with open(self.pickle_filename, "rb") as f:
                 weights = pickle.load(f)
                 self.q_network.set_weights(weights)
+                print("Loaded %s" % self.pickle_filename)
         # Set the target-Q-network weights to the Q-network weights
         self.target_q_network.set_weights(self.q_network.get_weights())
 

@@ -8,6 +8,12 @@ n_squares_width: 7
 n_squares_height: 6
 
 ############################################
+# Training
+num_episodes: 50000
+saving_freq: 50000
+train_code: &train_code "G"
+
+############################################
 # Random
 Random: &Random
     name: "Random"
@@ -30,6 +36,7 @@ Q_Learning: &Q_Learning
     ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/q_learning_values"
+    train_code: *train_code
 
 # DQN parameters
 DQN: &DQN
@@ -42,6 +49,7 @@ DQN: &DQN
     ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/dqn_values"
+    train_code: *train_code
 
 ############################################
 # Agents
@@ -58,8 +66,8 @@ player:
 monster:
     max_hp: 100
     movement_speed: 3
-    attack_damage: 0 #10
-    attacks_max_number: 0 #2
+    attack_damage: 5 #10
+    attacks_max_number: 1 #2
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
@@ -69,11 +77,6 @@ monster:
 advanced_reward: False
 
 ############################################
-
-# Training
-num_episodes: 50000
-saving_freq: 50000
-train_code: "G"
 
 # Experiment A
 # statistics_filename: "statistics/QL_A"
@@ -107,6 +110,6 @@ train_code: "G"
 statistics_filename: "statistics/QL_G"
 # + QL, Simple Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
-# + QL, Simple Reward, Mimic FullMovement HalfAttacks HalfDamage, Mimic RuleBased Strategy, 50k episodes
+# + QL, Simple Reward, Mimic FullMovement HalfAttacks HalfDamage, Mimic RuleBased Strategy, 100k episodes
 # + QL, Simple Reward, Mimic FullMovement HalfAttacks FullDamage, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
