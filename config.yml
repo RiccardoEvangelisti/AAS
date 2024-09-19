@@ -57,23 +57,23 @@ player:
 
 monster:
     max_hp: 100
-    movement_speed: 3
-    attack_damage: 10
-    attacks_max_number: 2
+    movement_speed: 0 #3
+    attack_damage: 0 #10
+    attacks_max_number: 0 #2
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
     algorithm: *RuleBased # NEEDS to be an alias of the algorithm (the "*")
 
 # Reward System
-advanced_reward: False
+advanced_reward: True
 
 ############################################
 
 # Training
 num_episodes: 100000
 saving_freq: 100000
-train_code: "E"
+train_code: "F"
 
 # Experiment A
 # statistics_filename: "statistics/QL_A"
@@ -92,7 +92,13 @@ train_code: "E"
 # + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 200k episodes
 
 # Experiment E
-statistics_filename: "statistics/QL_E"
+# statistics_filename: "statistics/QL_E"
 # + QL, Simple Reward, Mimic NoMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
 # + QL, Simple Reward, Mimic YesMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
 # + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 100k episodes
+
+# Experiment F
+statistics_filename: "statistics/QL_F"
+# + QL, Advanced Reward, Mimic NoMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
+# + QL, Advanced Reward, Mimic YesMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
+# + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 100k episodes
