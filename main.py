@@ -1,6 +1,6 @@
 import pygame
 import yaml
-
+import subprocess
 import logging, os
 
 logging.disable(logging.WARNING)  # disable TF logging
@@ -239,6 +239,11 @@ def main():
 
     if config.RENDER.mode == "human":
         pygame.quit()
+
+    # Run statistics notebook to generate pictures
+    subprocess.run(
+        ["jupyter", "nbconvert", "--to", "notebook", "--execute", "--inplace", "statistics/statistics.ipynb"]
+    )
 
 
 if __name__ == "__main__":
