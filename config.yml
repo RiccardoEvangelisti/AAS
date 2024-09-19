@@ -11,7 +11,7 @@ n_squares_height: 6
 # Training
 num_episodes: 50000
 saving_freq: 50000
-train_code: &train_code "G"
+train_code: &train_code "E"
 
 ############################################
 # Random
@@ -65,9 +65,9 @@ player:
 
 monster:
     max_hp: 100
-    movement_speed: 3
-    attack_damage: 5 #10
-    attacks_max_number: 1 #2
+    movement_speed: 0 #3
+    attack_damage: 0 #5 #10
+    attacks_max_number: 0 #1 #2
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
@@ -95,19 +95,19 @@ advanced_reward: False
 # + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 200k episodes
 
 # Experiment E
-# statistics_filename: "statistics/QL_E"
-# + QL, Simple Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 100k episodes
-# + QL, Simple Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 100k episodes
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 100k episodes
+statistics_filename: "statistics/QL_E"
+# + QL, Simple Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
+# + QL, Simple Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
+# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
 
 # Experiment F
 # statistics_filename: "statistics/QL_F"
-# + QL, Advanced Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 100k episodes
-# + QL, Advanced Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 100k episodes
-# + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 100k episodes
+# + QL, Advanced Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
+# + QL, Advanced Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
+# + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
 
 # Experiment G
-statistics_filename: "statistics/QL_G"
+# statistics_filename: "statistics/QL_G"
 # + QL, Simple Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement HalfAttacks HalfDamage, Mimic RuleBased Strategy, 100k episodes
