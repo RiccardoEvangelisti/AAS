@@ -57,7 +57,7 @@ player:
 
 monster:
     max_hp: 100
-    movement_speed: 0 #3
+    movement_speed: 3
     attack_damage: 0 #10
     attacks_max_number: 0 #2
     picture_path: "pictures/mimic2-token.png"
@@ -77,28 +77,36 @@ train_code: "F"
 
 # Experiment A
 # statistics_filename: "statistics/QL_A"
-# + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic Random Strategy, 200k episodes
+# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic Random Strategy, 200k episodes
 
 # Experiment B
 # statistics_filename: "statistics/QL_B"
-# + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic Random Strategy, 200k episodes
+# + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic Random Strategy, 200k episodes
 
 # Experiment C
 # statistics_filename: "statistics/QL_C"
-# + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 200k episodes
+# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 200k episodes
 
 # Experiment D
 # statistics_filename: "statistics/QL_D"
-# + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 200k episodes
+# + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 200k episodes
 
 # Experiment E
 # statistics_filename: "statistics/QL_E"
-# + QL, Simple Reward, Mimic NoMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
-# + QL, Simple Reward, Mimic YesMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
-# + QL, Simple Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 100k episodes
+# + QL, Simple Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 100k episodes
+# + QL, Simple Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 100k episodes
+# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 100k episodes
 
 # Experiment F
 statistics_filename: "statistics/QL_F"
-# + QL, Advanced Reward, Mimic NoMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
-# + QL, Advanced Reward, Mimic YesMovement NoAttack, Mimic RuleBased Strategy, 100k episodes
-# + QL, Advanced Reward, Mimic YesMovement YesAttack, Mimic RuleBased Strategy, 100k episodes
+# + QL, Advanced Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 100k episodes
+# + QL, Advanced Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 100k episodes
+# + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 100k episodes
+
+# Experiment G
+# statistics_filename: "statistics/QL_G"
+# + QL, Advanced Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
+# + QL, Advanced Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
+# + QL, Advanced Reward, Mimic FullMovement HalfAttacks HalfDamage, Mimic RuleBased Strategy, 50k episodes
+# + QL, Advanced Reward, Mimic FullMovement HalfAttacks FullDamage, Mimic RuleBased Strategy, 50k episodes
+# + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
