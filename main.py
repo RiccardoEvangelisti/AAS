@@ -207,7 +207,9 @@ def main():
             # Get available actions for the playing agent
             available_actions = playing_agent.available_actions(env.grid, env.n_squares_height, env.n_squares_width)
             # Choose action
-            action = playing_agent.algorithm.epsilon_greedy(state, available_actions)
+            action = playing_agent.algorithm.epsilon_greedy(
+                state, available_actions, linear_decay_over_episodes=((episode + 1) / config.num_episodes)
+            )
 
             # Take the chosen action and observe the next state and reward
             next_state, reward, done = step(action, available_actions, state, env)

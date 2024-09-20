@@ -9,9 +9,9 @@ n_squares_height: 6
 
 ############################################
 # Training
-num_episodes: 50000
+num_episodes: 100000
 saving_freq: 50000
-train_code: &train_code "H"
+train_code: &train_code "I"
 
 ############################################
 # Random
@@ -31,8 +31,8 @@ RuleBased: &RuleBased
 # Q_learning parameters
 Q_Learning: &Q_Learning
     name: "Q_Learning"
-    EPSILON: 0.05
-    EPSILON_rateDecay: 1 # Exploration rate decay
+    EPSILON: 1
+    EPSILON_rateDecay: "linear_over_episodes" #1 # Exploration rate decay
     ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/q_learning_values"
@@ -117,6 +117,11 @@ advanced_reward: False
 
 
 # Experiment H
-statistics_filename: "statistics/QL_H"
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.95, 150k
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.90, 100k
+# statistics_filename: "statistics/QL_H"
+# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.95, 150k episodes
+# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.90, 100k episodes
+
+
+# Experiment I
+statistics_filename: "statistics/QL_I"
+# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.95, 100k episodes

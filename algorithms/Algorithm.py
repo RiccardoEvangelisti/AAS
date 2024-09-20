@@ -22,8 +22,14 @@ class Algorithm(ABC):
     def save_value_function(self, pickle_filename):
         pass
 
-    def epsilon_greedy(self, state: State, available_actions: list[CombatAction]) -> CombatAction:
-        self.epsilon = self.epsilon * self.epsilon_decay_rate
+    def epsilon_greedy(
+        self, state: State, available_actions: list[CombatAction], linear_decay_over_episodes
+    ) -> CombatAction:
+        if self.epsilon_decay_rate == "linear_over_episodes":
+            self.epsilon = 1 - linear_decay_over_episodes  # linear decay over all episodes
+            print(self.epsilon)
+        else:
+            self.epsilon = self.epsilon * self.epsilon_decay_rate
         # Explore
         if random.random() < self.epsilon:
             return random.choice(available_actions)
