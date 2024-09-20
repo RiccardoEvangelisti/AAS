@@ -24,7 +24,7 @@ Random: &Random
 # RuleBased 
 RuleBased: &RuleBased
     name: "RuleBased"
-    EPSILON: 0.90
+    EPSILON: 0.80
     EPSILON_rateDecay: 1
     pickle_filename: ""
 
@@ -124,4 +124,5 @@ advanced_reward: False
 
 # Experiment I
 statistics_filename: "statistics/QL_I"
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.95, 100k episodes
+# + QL, Simple Reward, Erik linear epsilon decay, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.90, 100k episodes
+# + QL, Simple Reward, Erik linear epsilon decay, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.80, 100k episodes

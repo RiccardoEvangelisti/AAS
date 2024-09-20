@@ -27,7 +27,6 @@ class Algorithm(ABC):
     ) -> CombatAction:
         if self.epsilon_decay_rate == "linear_over_episodes":
             self.epsilon = 1 - linear_decay_over_episodes  # linear decay over all episodes
-            print(self.epsilon)
         else:
             self.epsilon = self.epsilon * self.epsilon_decay_rate
         # Explore
