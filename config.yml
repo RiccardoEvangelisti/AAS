@@ -118,4 +118,4 @@ advanced_reward: False
 
 # Experiment H
 statistics_filename: "statistics/QL_H"
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.95, 50k
+# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.95, 150k
