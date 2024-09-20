@@ -11,7 +11,7 @@ n_squares_height: 6
 # Training
 num_episodes: 300000
 saving_freq: 50000
-train_code: &train_code "L"
+train_code: &train_code "M"
 
 ############################################
 # Random
@@ -33,7 +33,7 @@ Q_Learning: &Q_Learning
     name: "Q_Learning"
     EPSILON: 1
     EPSILON_rateDecay: "linear_over_episodes" # Exploration rate decay
-    ALPHA: 0.1 # Learning rate
+    ALPHA: 0.5 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/q_learning_values"
     train_code: *train_code
@@ -74,7 +74,7 @@ monster:
     algorithm: *RuleBased # NEEDS to be an alias of the algorithm (the "*")
 
 # Reward System
-advanced_reward: True
+advanced_reward: False
 
 ############################################
 
@@ -138,6 +138,7 @@ advanced_reward: True
 # statistics_filename: "statistics/QL_K"
 # + QL, Simple Reward, Erik linear epsilon decay over all episodes, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon decay decreasing at Erik's half decay velocity, 200k episodes
 
-# Experiment L
-statistics_filename: "statistics/QL_L"
-# + QL, AdvancedReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon decay decreasing at Erik's half decay velocity, 300k episodes
+
+# Experiment M
+statistics_filename: "statistics/QL_M"
+# + QL, Simple Reward, Erik linear epsilon decay over all episodes, alpha=0.5 , Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon decay decreasing at Erik's half decay velocity, 200k episodes
