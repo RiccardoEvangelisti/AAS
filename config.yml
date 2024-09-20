@@ -11,7 +11,7 @@ n_squares_height: 6
 # Training
 num_episodes: 50000
 saving_freq: 50000
-train_code: &train_code "G"
+train_code: &train_code "H"
 
 ############################################
 # Random
@@ -24,7 +24,7 @@ Random: &Random
 # RuleBased 
 RuleBased: &RuleBased
     name: "RuleBased"
-    EPSILON: 0
+    EPSILON: 0.95
     EPSILON_rateDecay: 1
     pickle_filename: ""
 
@@ -67,7 +67,7 @@ monster:
     max_hp: 100
     movement_speed: 3
     attack_damage: 10
-    attacks_max_number: 1 #2
+    attacks_max_number: 2
     picture_path: "pictures/mimic2-token.png"
     name: "Mimic"
     default_coordinates: "random"
@@ -107,9 +107,15 @@ advanced_reward: False
 # + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
 
 # Experiment G
-statistics_filename: "statistics/QL_G"
+# statistics_filename: "statistics/QL_G"
 # + QL, Simple Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
 # + QL, Simple Reward, Mimic FullMovement HalfAttacks HalfDamage, Mimic RuleBased Strategy, 150k episodes
 # + QL, Simple Reward, Mimic FullMovement HalfAttacks FullDamage, Mimic RuleBased Strategy, 100k episodes
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
+# (aborted here)
+# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy
+
+
+# Experiment H
+statistics_filename: "statistics/QL_H"
+# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.95, 50k
