@@ -1,6 +1,6 @@
 # Graphics
 RENDER:
-    mode: "human"
+    mode: #"human"
     wait_timestep_ms: 700
 
 # Grid
@@ -9,9 +9,9 @@ n_squares_height: 6
 
 ############################################
 # Training
-num_episodes: 300000
-saving_freq: 50000
-train_code: &train_code "O"
+num_episodes: 1000
+saving_freq: 50
+train_code: &train_code "A"
 
 ############################################
 # Random
@@ -24,14 +24,14 @@ Random: &Random
 # RuleBased 
 RuleBased: &RuleBased
     name: "RuleBased"
-    EPSILON: 0
-    EPSILON_rateDecay: 1 #"linear_over_episodes" #"half_linear_over_episodes"
+    EPSILON: 1
+    EPSILON_rateDecay: "half_linear_over_episodes" #"linear_over_episodes"
     pickle_filename: ""
 
 # Q_learning parameters
 Q_Learning: &Q_Learning
     name: "Q_Learning"
-    EPSILON: 0 #1
+    EPSILON: 0 
     EPSILON_rateDecay: 1 #"linear_over_episodes" # Exploration rate decay
     ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
@@ -41,11 +41,11 @@ Q_Learning: &Q_Learning
 # DQN parameters
 DQN: &DQN
     name: "DQN"
-    minibatch_size: 64 # Number of experiences to sample from memory
+    minibatch_size: 32 # Number of experiences to sample from memory
     replay_buffer_size: 10000
     target_update_freq: 1000
-    EPSILON: 0.05 # Exploration rate
-    EPSILON_rateDecay: 1 # Exploration rate decay
+    EPSILON: 1
+    EPSILON_rateDecay: "linear_over_episodes"
     ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/dqn_values"
@@ -61,7 +61,7 @@ player:
     picture_path: "pictures/Erik combat pose-token.png"
     name: "Erik"
     default_coordinates: "random"
-    algorithm: *Q_Learning # NEEDS to be an alias of the algorithm (the "*")
+    algorithm: *DQN # NEEDS to be an alias of the algorithm (the "*")
 
 monster:
     max_hp: 100
@@ -74,82 +74,10 @@ monster:
     algorithm: *RuleBased # NEEDS to be an alias of the algorithm (the "*")
 
 # Reward System
-advanced_reward: True
+advanced_reward: False
 
 ############################################
 
 # Experiment A
-# statistics_filename: "statistics/QL_A"
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic Random Strategy, 200k episodes
-
-# Experiment B
-# statistics_filename: "statistics/QL_B"
-# + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic Random Strategy, 200k episodes
-
-# Experiment C
-# statistics_filename: "statistics/QL_C"
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 200k episodes
-
-# Experiment D
-# statistics_filename: "statistics/QL_D"
-# + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 200k episodes
-
-# Experiment E
-# statistics_filename: "statistics/QL_E"
-# + QL, Simple Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
-# + QL, Simple Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
-
-# Experiment F
-# statistics_filename: "statistics/QL_F"
-# + QL, Advanced Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
-# + QL, Advanced Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
-# + QL, Advanced Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy, 50k episodes
-
-# Experiment G
-# statistics_filename: "statistics/QL_G"
-# + QL, Simple Reward, Mimic NoMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
-# + QL, Simple Reward, Mimic FullMovement NoAttacks, Mimic RuleBased Strategy, 50k episodes
-# + QL, Simple Reward, Mimic FullMovement HalfAttacks HalfDamage, Mimic RuleBased Strategy, 150k episodes
-# + QL, Simple Reward, Mimic FullMovement HalfAttacks FullDamage, Mimic RuleBased Strategy, 100k episodes
-# (aborted here)
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy
-
-
-# Experiment H
-# statistics_filename: "statistics/QL_H"
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.95, 150k episodes
-# + QL, Simple Reward, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.90, 100k episodes
-
-
-# Experiment I
-# statistics_filename: "statistics/QL_I"
-# + QL, Simple Reward, Erik linear epsilon decay, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.90, 100k episodes
-# + QL, Simple Reward, Erik linear epsilon decay, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.80, 100k episodes
-# + QL, Simple Reward, Erik epsilon=0.01, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.80, 50k episodes
-
-# Experiment J
-# statistics_filename: "statistics/QL_J"
-# + QL, Advanced Reward, Erik linear epsilon decay, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.90, 100k episodes
-# + QL, Advanced Reward, Erik linear epsilon decay, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.80, 150k episodes
-# + QL, Advanced Reward, Erik epsilon=0.01 , Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon 0.80, 50k episodes
-
-# Experiment K
-# statistics_filename: "statistics/QL_K"
-# + QL, Simple Reward, Erik linear epsilon decay over all episodes, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon decay decreasing at Erik's half decay velocity, 200k episodes
-
-# Experiment L
-# statistics_filename: "statistics/QL_L"
-# + QL, AdvancedReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon decay decreasing at Erik's half decay velocity, 300k episodes
-
-# Experiment M
-# statistics_filename: "statistics/QL_M"
-# + QL, Simple Reward, Erik linear epsilon decay over all episodes, alpha=0.5, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon decay decreasing at Erik's half decay velocity, 200k episodes
-
-# Experiment N
-# statistics_filename: "statistics/QL_N"
-# + QL, Simple Reward, Erik linear epsilon decay over all episodes, alpha=0.01, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon decay decreasing at Erik's half decay velocity, 200k episodes
-
-# Experiment O
-statistics_filename: "statistics/QL_O"
-# + QL, AdvancedReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon linear decay decreasing, 300k episodes, Mimic speed=2, Mimi and Erik hp = 20
+statistics_filename: "statistics/DQN_A"
+# + DQN, SimpleReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon half-linear decay, 1k episodes, Mimic speed=2
