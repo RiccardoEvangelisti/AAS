@@ -50,12 +50,6 @@ class DQN(Algorithm):
         self.step_counter = 0  # for the target network update
         self.total_counter = 0  # for the loss plotting
 
-        print("TensorFlow version: ", tf.__version__)
-        device_name = tf.test.gpu_device_name()
-        if not device_name:
-            raise SystemError("GPU device not found")
-        print("Found GPU at: {}".format(device_name))
-
         log_dir = "logs/gradient_tape/" + datetime.now().strftime("%Y%m%d-%H%M%S")
         self.summary_writer = tf.summary.create_file_writer(log_dir)
 
@@ -64,7 +58,7 @@ class DQN(Algorithm):
         network = models.Sequential(
             [
                 layers.Input(shape=(self.num_states,)),
-                layers.Dense(128, activation="relu"),
+                layers.Dense(64, activation="relu"),
                 layers.Dense(self.num_actions),
             ]
         )

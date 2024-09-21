@@ -9,9 +9,9 @@ n_squares_height: 6
 
 ############################################
 # Training
-num_episodes: 1000
-saving_freq: 50
-train_code: &train_code "A"
+num_episodes: 10000
+saving_freq: 10000
+train_code: &train_code "B"
 
 ############################################
 # Random
@@ -74,10 +74,10 @@ monster:
     algorithm: *RuleBased # NEEDS to be an alias of the algorithm (the "*")
 
 # Reward System
-advanced_reward: False
+advanced_reward: True
 
 ############################################
 
-# Experiment A
-statistics_filename: "statistics/DQN_A"
-# + DQN, SimpleReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon half-linear decay, 1k episodes, Mimic speed=2
+# Experiment B
+statistics_filename: "statistics/DQN_B"
+# + DQN, AdvancedReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon half-linear decay, 1k episodes, Mimic speed=2, 64 nodes
