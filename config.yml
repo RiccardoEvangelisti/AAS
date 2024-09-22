@@ -1,6 +1,6 @@
 # Graphics
 RENDER:
-    mode: #"human"
+    mode: "human"
     wait_timestep_ms: 700
 
 # Grid
@@ -11,7 +11,7 @@ n_squares_height: 6
 # Training
 num_episodes: 3000
 saving_freq: 500
-train_code: &train_code "D"
+train_code: &train_code "L"
 
 ############################################
 # Random
@@ -24,8 +24,8 @@ Random: &Random
 # RuleBased 
 RuleBased: &RuleBased
     name: "RuleBased"
-    EPSILON: 1
-    EPSILON_rateDecay: "half_linear_over_episodes" #"linear_over_episodes"
+    EPSILON: 0
+    EPSILON_rateDecay: 1 #"half_linear_over_episodes" #"linear_over_episodes"
     pickle_filename: ""
 
 # Q_learning parameters
@@ -44,8 +44,8 @@ DQN: &DQN
     minibatch_size: 512 # Number of experiences to sample from memory
     replay_buffer_size: 50000
     target_update_freq: 1000
-    EPSILON: 1
-    EPSILON_rateDecay: "linear_over_episodes"
+    EPSILON: 0
+    EPSILON_rateDecay: 1 #"linear_over_episodes"
     ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/dqn_values"
@@ -61,7 +61,7 @@ player:
     picture_path: "pictures/Erik combat pose-token.png"
     name: "Erik"
     default_coordinates: "random"
-    algorithm: *DQN # NEEDS to be an alias of the algorithm (the "*")
+    algorithm: *Q_Learning # NEEDS to be an alias of the algorithm (the "*")
 
 monster:
     max_hp: 100
@@ -87,5 +87,8 @@ advanced_reward: False
 # + DQN, SimpleReward, Erik half-linear epsilon decay over all episodes, alpha=0.2, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon half-linear decay, 10k episodes, Mimic speed=2, 64 nodes
 
 # Experiment D
-statistics_filename: "statistics/DQN_D"
+# statistics_filename: "statistics/DQN_D"
 # + DQN, SimpleReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon half-linear decay, 3k episodes, Mimic speed=2, 128 nodes
+
+
+statistics_filename: "statistics/QL_L"
