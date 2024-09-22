@@ -1,4 +1,4 @@
-# D&D Combat with ReinforcementLearning
+# D&D Combat with Reinforcement Learning
 
 This repository contains a project focused on applying reinforcement learning techniques to simulate combat scenarios in Dungeons&Dragons.
 
