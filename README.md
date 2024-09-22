@@ -1,10 +1,10 @@
 # D&D Combat with Reinforcement Learning
 
-This repository contains a project focused on applying reinforcement learning techniques to simulate combat scenarios in Dungeons&Dragons.
+This repository contains a project focused on applying reinforcement learning techniques to simulate combat scenarios in Dungeons&Dragons, unsing Q-learning and DQN.
 
 ## Overview
 
-The project aims to create an intelligent agent that can learn and adapt to various combat situations in D&D. By leveraging reinforcement learning algorithms, the agents can make strategic decisions to maximize their chances of success in battles.
+The project aims to create an intelligent agent that can learn to defeat an enemy in a D&D combat. By leveraging reinforcement learning algorithms, the agents can make decisions to maximize their chances of success in battles.
 
 <p align="center">
   <img src="./pictures/fig.env.png" width="500"/>
