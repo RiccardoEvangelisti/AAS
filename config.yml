@@ -9,9 +9,9 @@ n_squares_height: 6
 
 ############################################
 # Training
-num_episodes: 10000
-saving_freq: 10000
-train_code: &train_code "B"
+num_episodes: 3000
+saving_freq: 500
+train_code: &train_code "D"
 
 ############################################
 # Random
@@ -41,12 +41,12 @@ Q_Learning: &Q_Learning
 # DQN parameters
 DQN: &DQN
     name: "DQN"
-    minibatch_size: 32 # Number of experiences to sample from memory
-    replay_buffer_size: 10000
+    minibatch_size: 512 # Number of experiences to sample from memory
+    replay_buffer_size: 50000
     target_update_freq: 1000
     EPSILON: 1
-    EPSILON_rateDecay: "half_linear_over_episodes"
-    ALPHA: 0.2 # Learning rate
+    EPSILON_rateDecay: "linear_over_episodes"
+    ALPHA: 0.1 # Learning rate
     GAMMA: 0.9 # Discount factor
     pickle_filename: "outputs/dqn_values"
     train_code: *train_code
@@ -83,5 +83,9 @@ advanced_reward: False
 # + DQN, AdvancedReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon half-linear decay, 1k episodes, Mimic speed=2, 64 nodes
 
 # Experiment C
-statistics_filename: "statistics/DQN_C"
-# + DQN, SimpleReward, Erik half-linear epsilon decay over all episodes, alpha=0.2, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon half-linear decay, 1k episodes, Mimic speed=2, 64 nodes
+# statistics_filename: "statistics/DQN_C"
+# + DQN, SimpleReward, Erik half-linear epsilon decay over all episodes, alpha=0.2, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon half-linear decay, 10k episodes, Mimic speed=2, 64 nodes
+
+# Experiment D
+statistics_filename: "statistics/DQN_D"
+# + DQN, SimpleReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon half-linear decay, 3k episodes, Mimic speed=2, 128 nodes
