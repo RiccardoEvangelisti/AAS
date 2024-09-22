@@ -6,7 +6,9 @@ This repository contains a project focused on applying reinforcement learning te
 
 The project aims to create an intelligent agent that can learn and adapt to various combat situations in D&D. By leveraging reinforcement learning algorithms, the agents can make strategic decisions to maximize their chances of success in battles.
 
-[[pictures/fig.env.png]]
+<p align="center">
+  <img src="./pictures/fig.env.png" width="500"/>
+</p>
 
 ## Features
 
