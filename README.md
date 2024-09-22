@@ -12,11 +12,15 @@ The project aims to create an intelligent agent that can learn to defeat an enem
 
 ## Features
 
-- **Agent Interfaces**: Defines the interfaces for different types of agents used in the simulation.
-- **Algorithms**: Contains the implementation of various reinforcement learning algorithms, including Q-learning and DQN.
-- **Combat Actions**: Manages the different actions that agents can perform during combat.
-- **Environment**: Simulates the DnD combat environment where agents interact and learn.
-- **Statistics**: Collects and visualizes data on agent performance and learning progress.
+- **agent_interfaces/**: Defines the interfaces for different types of agents used in the simulation.
+- **algorithms/**: Contains the implementation of various reinforcement learning algorithms, including Q-learning and DQN.
+- **combat_actions/**: Defines the different actions that agents can perform during combat.
+- **statistics/**: Collects and visualizes data on agents performance and learning progress. Here are located the results of each test and the notebook associated.
+- **Agent**: Defines the agents classes.
+- **config.yml**: Contains the configuration and hyperparameters of the entire simulation.
+- **DnDEnvironment**: Simulates the D&D combat environment where agents interact.
+- **main**: Contains the core of the program logic. Here are located the main loop of episodes and the step function.
+- **State**: Represents the state of the simulation.
 
 ## Usage
 

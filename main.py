@@ -69,8 +69,8 @@ def step(action: CombatAction, available_actions, state: State, env: DnDEnvironm
         return new_state, reward, done
 
     #######################
-    # Check if the agent took the EndTurn action but still he could made an attack (number of attaks left > 0 AND if it had an Attack action available)
     if config.advanced_reward:
+        # Check if the agent took the EndTurn action but still he could made an attack (number of attaks left > 0 AND if it had an Attack action available)
         if (
             action.name == "EndTurn"  # if took EndTurn action
             and OLD_playing_agent_is_attack_available  # if it had attacks left
@@ -125,6 +125,7 @@ def setAlgorithm(algorithm, env: DnDEnvironment) -> Algorithm:
     else:
         raise Exception(f"Algorithm '{algorithm}' not found in config")
 
+#####################################
 
 def main():
 
