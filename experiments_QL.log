@@ -71,3 +71,15 @@
 # Experiment O
 # statistics_filename: "statistics/QL_O"
 # + QL, AdvancedReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon linear decay decreasing, 300k episodes, Mimic speed=2, Mimi and Erik hp = 20
+
+# Experiment P
+# statistics_filename: "statistics/QL_P"
+# + QL, SimpleReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon linear decay decreasing, 100k episodes, Mimic speed=2, added normalized current winner player hp in reward
+
+# Experiment Q
+# statistics_filename: "statistics/QL_P"
+# + QL, AdvancedReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon linear decay decreasing, 100k episodes, Mimic speed=2, added normalized current winner player hp in reward
+
+# Experiment R
+# statistics_filename: "statistics/QL_P"
+# + QL, AdvancedReward, Erik linear epsilon decay over all episodes, alpha=0.1, Mimic FullMovement FullAttacks, Mimic RuleBased Strategy with epsilon linear decay decreasing, 100k episodes, Mimic speed=2, added normalized current winner player hp+10 in reward
