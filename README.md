@@ -7,8 +7,10 @@ This repository contains a project focused on applying reinforcement learning te
 The project aims to create an intelligent agent that can learn to defeat an enemy in a D&D combat. By leveraging reinforcement learning algorithms, the agents can make decisions to maximize their chances of success in battles.
 
 <p align="center">
-  <img src="./pictures/fig.env.png" width="500"/>
+  <img src="./pictures/combat.png" width="500"/>
 </p>
+
+*Credits of background picture [here](https://www.reddit.com/r/battlemaps/comments/q6ncj9/9x9630x630buildingbattlemap_freds_shed_cosy/)*
 
 ## Features
 
